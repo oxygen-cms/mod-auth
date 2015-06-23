@@ -14,7 +14,7 @@ use Response;
 use URL;
 use View;
 
-use Oxygen\Core\Blueprint\Manager as BlueprintManager;
+use Oxygen\Core\Blueprint\BlueprintManager;
 use Oxygen\Core\Controller\BlueprintController;
 
 class RemindersController extends BlueprintController {
