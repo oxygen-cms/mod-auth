@@ -1,0 +1,42 @@
+{
+    "name": "oxygen/mod-auth",
+    "description": "Authorisation Interface",
+    "license": "MIT",
+    "keywords": [
+        "cms",
+        "framework",
+        "OxygenExtension"
+    ],
+    "authors": [
+        {
+            "name": "Chris Chamberlain",
+            "email": "c.chamberlain@iinet.net.au"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "oxygen/core": "dev-master",
+        "oxygen/data": "dev-master",
+        "oxygen/preferences": "dev-master",
+        "illuminate/support": "~5.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OxygenModule\\Auth\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "extra": {
+        "title": "Oxygen Module - Auth",
+        "readme": "oxygen.md",
+        "changes": "changes.md",
+        "icon": "icon.png",
+        "providers": [
+            {
+                "name": "Auth",
+                "class": "OxygenModule\\Auth\\AuthServiceProvider",
+                "description": "Authorisation & User Profile Interface"
+            }
+        ]
+    }
+}
