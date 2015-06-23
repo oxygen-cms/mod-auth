@@ -1,6 +1,6 @@
 <?php
 
-namespace Oxygen\Auth\Controller;
+namespace OxygenModule\Auth\Controller;
 
 use Exception;
 

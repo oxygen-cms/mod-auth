@@ -1,9 +1,10 @@
 <?php
 
+use OxygenModule\Auth\Controller\RemindersController;
 use Oxygen\Core\Action\Factory\ActionFactory;
 
 Blueprint::make('Reminders', function($blueprint) {
-    $blueprint->setController('Oxygen\Auth\Controller\RemindersController');
+    $blueprint->setController(RemindersController::class);
     $blueprint->setDisplayName('Reminders', Blueprint::SINGULAR);
     $blueprint->setDisplayName('Reminders', Blueprint::PLURAL);
 
