@@ -11,7 +11,7 @@
 
     $header = Header::fromBlueprint(
         $blueprint,
-        Lang::get('oxygen/auth::ui.profile.title')
+        Lang::get('oxygen/mod-auth::ui.profile.title')
     );
 
 ?>

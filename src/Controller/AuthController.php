@@ -41,7 +41,7 @@ class AuthController extends BasicCrudController {
      */
     public function getCheck() {
         if(Auth::check()) {
-            return Redirect::intended(URL::route(Config::get('oxygen/auth::dashboard')));
+            return Redirect::intended(URL::route(Config::get('oxygen/mod-auth::dashboard')));
         } else {
             return Redirect::guest(URL::route('auth.getLogin'));
         }
@@ -53,8 +53,8 @@ class AuthController extends BasicCrudController {
      * @return Response
      */
     public function getLogin() {
-        return View::make('oxygen/auth::login', [
-            'title' => Lang::get('oxygen/auth::ui.login.title')
+        return View::make('oxygen/mod-auth::login', [
+            'title' => Lang::get('oxygen/mod-auth::ui.login.title')
         ]);
     }
 
@@ -74,16 +74,16 @@ class AuthController extends BasicCrudController {
 
             return Response::notification(
                 new Notification(
-                    Lang::get('oxygen/auth::messages.login.successful', ['name' => Auth::user()->getFullName()])
+                    Lang::get('oxygen/mod-auth::messages.login.successful', ['name' => Auth::user()->getFullName()])
                 ),
-                ['redirect' => Config::get('oxygen/auth::dashboard'), 'hardRedirect' => true]
+                ['redirect' => Config::get('oxygen/mod-auth::dashboard'), 'hardRedirect' => true]
             );
         } else {
             Event::fire('auth.login.failed', [Input::get('username')]);
 
             return Response::notification(
                 new Notification(
-                    Lang::get('oxygen/auth::messages.login.failed'),
+                    Lang::get('oxygen/mod-auth::messages.login.failed'),
                     Notification::FAILED
                 )
             );
@@ -103,7 +103,7 @@ class AuthController extends BasicCrudController {
         Event::fire('auth.logout.successful', [$user]);
 
         return Response::notification(
-            new Notification(Lang::get('oxygen/auth::messages.logout.successful')),
+            new Notification(Lang::get('oxygen/mod-auth::messages.logout.successful')),
             ['redirect' => 'auth.getLogoutSuccess', 'hardRedirect' => true] // redirect without SmoothState
         );
     }
@@ -114,8 +114,8 @@ class AuthController extends BasicCrudController {
      * @return Response
      */
     public function getLogoutSuccess() {
-        return View::make('oxygen/auth::logout', [
-            'title' => Lang::get('oxygen/auth::ui.logout.title')
+        return View::make('oxygen/mod-auth::logout', [
+            'title' => Lang::get('oxygen/mod-auth::ui.logout.title')
         ]);
     }
 
@@ -128,9 +128,9 @@ class AuthController extends BasicCrudController {
     public function getInfo($foo = null) {
         $user = Auth::user();
 
-        return View::make('oxygen/auth::profile', [
+        return View::make('oxygen/mod-auth::profile', [
             'user' => $user,
-            'title' => Lang::get('oxygen/auth::ui.profile.title')
+            'title' => Lang::get('oxygen/mod-auth::ui.profile.title')
         ]);
     }
 
@@ -143,9 +143,9 @@ class AuthController extends BasicCrudController {
     public function getUpdate($foo = null) {
         $user = Auth::user();
 
-        return View::make('oxygen/auth::update', [
+        return View::make('oxygen/mod-auth::update', [
             'user' => $user,
-            'title' => Lang::get('oxygen/auth::ui.update.title')
+            'title' => Lang::get('oxygen/mod-auth::ui.update.title')
         ]);
     }
 
@@ -178,9 +178,9 @@ class AuthController extends BasicCrudController {
     public function getChangePassword() {
         $user = Auth::user();
 
-        return View::make('oxygen/auth::changePassword', [
+        return View::make('oxygen/mod-auth::changePassword', [
             'user' => $user,
-            'title' => Lang::get('oxygen/auth::ui.changePassword.title')
+            'title' => Lang::get('oxygen/mod-auth::ui.changePassword.title')
         ]);
     }
 
@@ -207,7 +207,7 @@ class AuthController extends BasicCrudController {
             $this->repository->persist($user);
 
             return Response::notification(
-                new Notification(Lang::get('oxygen/auth::messages.password.changed')),
+                new Notification(Lang::get('oxygen/mod-auth::messages.password.changed')),
                 ['redirect' => $this->blueprint->getRouteName('getInfo')]
             );
         } else {
@@ -227,7 +227,7 @@ class AuthController extends BasicCrudController {
         $this->repository->delete($user);
 
         return Response::notification(
-            new Notification(Lang::get('oxygen/auth::messages.account.terminated')),
+            new Notification(Lang::get('oxygen/mod-auth::messages.account.terminated')),
             ['redirect' => $this->blueprint->getRouteName('getLogin'), 'hardRedirect' => true]
         );
     }

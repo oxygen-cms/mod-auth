@@ -10,7 +10,7 @@ use Oxygen\Core\Html\Form\Label;use Oxygen\Core\Html\Form\Row;use Oxygen\Core\Ht
 
 $header = Header::fromBlueprint(
         $blueprint,
-        Lang::get('oxygen/auth::ui.update.title')
+        Lang::get('oxygen/mod-auth::ui.update.title')
     );
 
     $header->setBackLink(URL::route($blueprint->getRouteName('getInfo')));
@@ -51,8 +51,8 @@ $header = Header::fromBlueprint(
         }
 
         $footer = new Row([
-            new ButtonToolbarItem(Lang::get('oxygen/auth::ui.update.close'), $blueprint->getAction('getInfo')),
-            new SubmitToolbarItem(Lang::get('oxygen/auth::ui.update.save'))
+            new ButtonToolbarItem(Lang::get('oxygen/mod-auth::ui.update.close'), $blueprint->getAction('getInfo')),
+            new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.update.save'))
         ]);
         $footer->isFooter = true;
 

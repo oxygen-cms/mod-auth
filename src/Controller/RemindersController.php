@@ -36,8 +36,8 @@ class RemindersController extends BlueprintController {
      * @return Response
      */
     public function getRemind() {
-        return View::make('oxygen/auth::reminders.remind', [
-            'title' => Lang::get('oxygen/auth::ui.remind.title')
+        return View::make('oxygen/mod-auth::reminders.remind', [
+            'title' => Lang::get('oxygen/mod-auth::ui.remind.title')
         ]);
     }
 
@@ -48,7 +48,7 @@ class RemindersController extends BlueprintController {
      */
     public function postRemind() {
         $result = Password::remind(Input::only('email'), function($message) {
-            $message->subject(Lang::get('oxygen/auth::messages.reminder.email.subject'));
+            $message->subject(Lang::get('oxygen/mod-auth::messages.reminder.email.subject'));
         });
 
         $code = $result === Password::INVALID_USER ? 'failed' : 'success';
@@ -68,7 +68,7 @@ class RemindersController extends BlueprintController {
             App::abort(404);
         }
 
-        return View::make('oxygen/auth::reminders.reset', [
+        return View::make('oxygen/mod-auth::reminders.reset', [
             'token' => Input::get('token')
         ]);
     }

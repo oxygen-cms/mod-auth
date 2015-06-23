@@ -1,7 +1,7 @@
 @extends(app('oxygen.layout'))
 
 <?php
-    $bodyClasses = [ 'Login-theme--' . Config::get('oxygen/auth::theme') ];
+    $bodyClasses = [ 'Login-theme--' . Config::get('oxygen/mod-auth::theme') ];
     $usePage = false;
 ?>
 
@@ -17,7 +17,7 @@
 
     <div class="Header Header--noBorder">
         <h2 class="Header-title heading-beta flex-item">
-            @lang('oxygen/auth::ui.remind.title')
+            @lang('oxygen/mod-auth::ui.remind.title')
         </h2>
     </div>
 
@@ -32,13 +32,13 @@
 
         <div class="Row Form-footer">
             <button type="submit" class="Button Button-color--blue Button--stretch">
-                {{{ Lang::get('oxygen/auth::ui.remind.submit') }}}
+                {{{ Lang::get('oxygen/mod-auth::ui.remind.submit') }}}
             </button>
         </div>
 
         <div class="Row--visual">
             <a href="{{{ URL::route(Blueprint::get('Auth')->getRouteName('getLogin')) }}}">
-                @lang('oxygen/auth::ui.remind.backToLogin')
+                @lang('oxygen/mod-auth::ui.remind.backToLogin')
             </a>
         </div>
 
