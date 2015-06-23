@@ -38,7 +38,7 @@ $header = Header::fromBlueprint(
             if(!$field->editable) {
                 continue;
             }
-            $field = EditableField::fromEntity($field, app('input'), $user);
+            $field = EditableField::fromEntity($field, app('request'), $user);
             $label = new Label($field->getMeta());
             $row = new Row([$label, $field]);
             $form->addContent($row);
