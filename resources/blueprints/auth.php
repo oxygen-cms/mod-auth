@@ -1,14 +1,15 @@
 <?php
 
 use Carbon\Carbon;
-use Oxygen\Core\Action\Factory\ActionFactory;
+    use Oxygen\Auth\Controller\AuthController;
+    use Oxygen\Core\Action\Factory\ActionFactory;
 use Oxygen\Core\Action\Group;
 use Oxygen\Core\Contracts\CoreConfiguration;
 use Oxygen\Core\Form\Type\CustomType;
 use Oxygen\Core\Html\Dialog\Dialog;
 
 Blueprint::make('Auth', function($blueprint) {
-    $blueprint->setController('Oxygen\Auth\Controller\AuthController');
+    $blueprint->setController(AuthController::class);
     $blueprint->setDisplayName('Profile', Blueprint::SINGULAR);
     $blueprint->setDisplayName('Auth', Blueprint::PLURAL);
     $blueprint->setIcon('lock');
