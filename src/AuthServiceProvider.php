@@ -4,6 +4,7 @@ namespace OxygenModule\Auth;
 
 use Oxygen\Core\Blueprint\BlueprintManager;
 use Oxygen\Data\BaseServiceProvider;
+use Oxygen\Preferences\PreferencesManager;
 use Oxygen\Preferences\Transformer\JavascriptTransformer;
 
 class AuthServiceProvider extends BaseServiceProvider {
@@ -29,9 +30,9 @@ class AuthServiceProvider extends BaseServiceProvider {
             __DIR__ . '/../resources/views' => base_path('resources/views/vendor/oxygen/mod-auth')
         ]);
 
-        $this->app['oxygen.blueprintManager']->loadDirectory(__DIR__ . '/../resources/blueprints');
-        $this->app['oxygen.preferences']->loadDirectory(__DIR__ . '/../resources/preferences');
-
+        $this->app[BlueprintManager::class]->loadDirectory(__DIR__ . '/../resources/blueprints');
+        $this->app[PreferencesManager::class]->loadDirectory(__DIR__ . '/../resources/preferences');
+        
         $this->addNavigationItems();
         $this->addPreferencesToLayout();
 	}
