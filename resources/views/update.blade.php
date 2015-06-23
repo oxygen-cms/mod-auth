@@ -4,7 +4,7 @@
 
 <?php
 
-use Oxygen\Core\Html\Form\Label;use Oxygen\Core\Html\Form\Row;use Oxygen\Core\Html\Header\Header;
+use Oxygen\Core\Html\Form\Form;use Oxygen\Core\Html\Form\Label;use Oxygen\Core\Html\Form\Row;use Oxygen\Core\Html\Header\Header;
     use Oxygen\Core\Html\Form\EditableField;
     use Oxygen\Core\Html\Form\Footer;use Oxygen\Core\Html\Toolbar\ButtonToolbarItem;use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;
 
@@ -31,23 +31,17 @@ $header = Header::fromBlueprint(
 
 <div class="Block">
     <?php
-        echo Form::model(
-            $user,
-            [
-                'route' => $blueprint->getRouteName('putUpdate'),
-                'method' => 'PUT',
-                'class' => 'Form--sendAjax Form--warnBeforeExit Form--submitOnKeydown'
-            ]
-        );
+        $form = new Form($blueprint->getAction('putUpdate'));
+        $form->setAsynchronous(true)->setWarnBeforeExit(true)->setSubmitOnShortcutKey(true);
 
         foreach($blueprint->getFields() as $field) {
             if(!$field->editable) {
                 continue;
             }
-            $field = EditableField::fromEntity($field, $user);
+            $field = EditableField::fromEntity($field, app('input'), $user);
             $label = new Label($field->getMeta());
             $row = new Row([$label, $field]);
-            echo $row->render();
+            $form->addContent($row);
         }
 
         $footer = new Row([
@@ -56,9 +50,9 @@ $header = Header::fromBlueprint(
         ]);
         $footer->isFooter = true;
 
-        echo $footer->render();
+        $form->addContent($row);
 
-        echo Form::close();
+        echo $form->render();
     ?>
 </div>
 

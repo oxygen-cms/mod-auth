@@ -1,6 +1,12 @@
 @extends(app('oxygen.layout'))
 
 <?php
+    use Oxygen\Core\Form\FieldMetadata;
+    use Oxygen\Core\Html\Form\EditableField;
+    use Oxygen\Core\Html\Form\Form;
+    use Oxygen\Core\Html\Form\Row;
+    use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;
+
     $bodyClasses = [ 'Body--noScroll', 'Login--isHidden', 'Login-bodyTransition', 'Login-theme--' . Config::get('oxygen.auth::theme') ];
     $usePage = false;
 ?>
@@ -27,40 +33,48 @@
         </h2>
     </div>
 
-    {{ Form::open(array('route' => $blueprint->getRouteName('postLogin'), 'class' => 'Form--sendAjax Form--compact')) }}
+    <?php
+        $form = new Form($blueprint->getAction('postLogin'));
+        $form->setAsynchronous(true);
+        $form->addClass('Form--compact');
 
-        <div class="Row--visual">
-            {{ Form::text('username', null, [
-                'autocomplete'  => 'off',
-                'placeholder'   => 'Username',
-                'class'         => 'Form-input--fullWidth Form-input--transparent'
-            ]) }}
-        </div>
+        $usernameMetadata = new FieldMetadata('username', 'text', true);
+        $usernameMetadata->attributes = ['autocomplete' => 'off', 'placeholder' => 'Username', 'class' => 'Form-input--fullWidth Form-input--transparent'];
+        $usernameRow = new Row([new EditableField($usernameMetadata, app('input'))]);
+        $usernameRow->useDefaults = false;
+        $usernameRow->addClass('Row--visual');
+        $form->addContent($usernameRow);
 
-        <div class="Row--visual">
-            {{ Form::input('password', 'password', null, [
-                'autocomplete'  => 'off',
-                'placeholder'   => 'Password',
-                'class'         => 'Form-input--fullWidth Form-input--transparent'
-            ]) }}
-        </div>
+        $passwordMetadata = new FieldMetadata('password', 'password', true);
+        $passwordMetadata->attributes = ['autocomplete' => 'off', 'placeholder' => 'Password', 'class' => 'Form-input--fullWidth Form-input--transparent'];
+        $passwordRow = new Row([new EditableField($passwordMetadata, app('input'))]);
+        $passwordRow->useDefaults = false;
+        $passwordRow->addClass('Row--visual');
+        $form->addContent($passwordRow);
 
-        <div class="Row--visual">
-            {{ Form::checkbox('remember', '1', '1', ['id' => 'remember']) }}
-            {{ Form::label('remember', 'Remember Me', ['class' => 'Form-checkbox-label']) }}
-            <br><br>
-            <a href="{{{ URL::route(Blueprint::get('Reminders')->getRouteName('getRemind')) }}}">
-                @lang('oxygen/mod-auth::ui.login.forgotPassword')
-            </a>
-        </div>
+        $rememberMe = new FieldMetadata('remember', 'checkbox', true);
+        $rememberMe->label = 'Remember Me';
+        $rememberMe->options['on'] = '1';
+        $rememberMeEditable = new EditableField($rememberMe, app('input'));
+        $rememberMeRow = new Row([$rememberMeEditable, '<br><br>']);
+        $rememberMeRow->useDefaults = false;
+        $rememberMeRow->addClass('Row--visual');
+        $rememberMeRow->addItem(
+                '<a href="' . e(URL::route(Blueprint::get('Reminders')->getRouteName('getRemind'))) . '">' .
+                    Lang::get('oxygen/mod-auth::ui.login.forgotPassword') .
+                '</a>'
+        );
 
-        <div class="Row Form-footer">
-            <button type="submit" class="Button Button-color--blue Button--stretch">
-                {{{ Lang::get('oxygen/mod-auth::ui.login.submit') }}}
-            </button>
-        </div>
+        $submit = new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.login.submit'), 'blue');
+        $submit->stretch = true;
+        $submitRow = new Row([$submit]);
+        $submitRow->useDefaults = false;
+        $submitRow->addClass('Row--visual');
+        $submitRow->isFooter = true;
 
-    {{ Form::close() }}
+        echo $form->render();
+
+    ?>
 
 </div>
 
