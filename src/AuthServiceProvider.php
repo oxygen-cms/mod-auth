@@ -32,7 +32,7 @@ class AuthServiceProvider extends BaseServiceProvider {
 
         $this->app[BlueprintManager::class]->loadDirectory(__DIR__ . '/../resources/blueprints');
         $this->app[PreferencesManager::class]->loadDirectory(__DIR__ . '/../resources/preferences');
-        
+
         $this->addNavigationItems();
         $this->addPreferencesToLayout();
 	}
@@ -46,7 +46,7 @@ class AuthServiceProvider extends BaseServiceProvider {
 	public function addNavigationItems() {
 		$blueprints = $this->app[BlueprintManager::class];
 		$blueprint = $blueprints->get('Auth');
-		$nav = $this->app['oxygen.navigation'];
+		$nav = $this->app[Navigation::class];
 
 		$nav->add($blueprint->getToolbarItem('getInfo'));
 		$nav->add($blueprint->getToolbarItem('getPreferences'));

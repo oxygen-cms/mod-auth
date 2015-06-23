@@ -12,7 +12,7 @@ Blueprint::make('Auth', function($blueprint) {
     $blueprint->setDisplayName('Profile', Blueprint::SINGULAR);
     $blueprint->setDisplayName('Auth', Blueprint::PLURAL);
     $blueprint->setIcon('lock');
-
+    
     $blueprint->setToolbarOrders([
         'section' => ['getUpdate', 'getChangePassword', 'getPreferences']
     ]);
