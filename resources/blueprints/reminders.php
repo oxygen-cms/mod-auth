@@ -13,26 +13,26 @@ Blueprint::make('Reminders', function($blueprint) {
     $blueprint->makeAction([
         'name' => 'getRemind',
         'pattern' => 'remind',
-        'beforeFilters' => ['oxygen.guest']
+        'middleware' => ['oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([
         'name' => 'postRemind',
         'pattern' => 'remind',
         'method' => 'POST',
-        'beforeFilters' => ['oxygen.guest', 'oxygen.csrf']
+        'middleware' => ['oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([
         'name' => 'getReset',
         'pattern' => 'reset',
-        'beforeFilters' => ['oxygen.guest']
+        'middleware' => ['oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([
         'name' => 'postReset',
         'pattern' => 'logout',
         'method' => 'POST',
-        'beforeFilters' => ['oxygen.guest', 'oxygen.csrf']
+        'middleware' => ['oxygen.guest']
     ], $factory);
 });

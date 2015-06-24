@@ -29,14 +29,14 @@ Blueprint::make('Auth', function($blueprint) {
     $blueprint->makeAction([
         'name' => 'getLogin',
         'pattern' => 'login',
-        'beforeFilters' => ['oxygen.guest']
+        'middleware' => ['oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([
         'name' => 'postLogin',
         'pattern' => 'login',
         'method'  => 'POST',
-        'beforeFilters' => ['oxygen.guest', 'oxygen.csrf']
+        'middleware' => ['oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([
@@ -53,7 +53,7 @@ Blueprint::make('Auth', function($blueprint) {
     $blueprint->makeAction([
         'name' => 'getLogoutSuccess',
         'pattern' => 'logout',
-        'beforeFilters' => ['oxygen.guest']
+        'middleware' => ['oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([
