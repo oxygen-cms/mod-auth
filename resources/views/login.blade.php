@@ -64,6 +64,7 @@
                     Lang::get('oxygen/mod-auth::ui.login.forgotPassword') .
                 '</a>'
         );
+        $form->addContent($rememberMeRow);
 
         $submit = new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.login.submit'), 'blue');
         $submit->stretch = true;
@@ -71,6 +72,7 @@
         $submitRow->useDefaults = false;
         $submitRow->addClass('Row--visual');
         $submitRow->isFooter = true;
+        $form->addContent($submitRow);
 
         echo $form->render();
 
