@@ -5,7 +5,7 @@ use OxygenModule\Auth\Controller\AuthController;
 use Oxygen\Core\Action\Factory\ActionFactory;
 use Oxygen\Core\Action\Group;
 use Oxygen\Core\Contracts\CoreConfiguration;
-use Oxygen\Core\Form\Type\CustomType;
+
 use Oxygen\Core\Html\Dialog\Dialog;
 
 Blueprint::make('Auth', function($blueprint) {
@@ -119,50 +119,5 @@ Blueprint::make('Auth', function($blueprint) {
         'color' => 'red',
         'icon' => 'trash-o',
         'dialog' => new Dialog(Lang::get('oxygen/mod-auth::dialogs.terminateAccount'))
-    ]);
-
-    $blueprint->makeFields([
-        [
-            'name'      => 'username',
-            'label'     => 'Username',
-            'editable'  => true
-        ],
-        [
-            'name'      => 'fullName',
-            'label'     => 'Full Name',
-            'type'      => 'text',
-            'editable'  => true
-        ],
-        [
-            'name'      => 'email',
-            'label'     => 'Email Address',
-            'type'      => 'email',
-            'editable'  => true
-        ],
-        [
-            'name'      => 'group',
-            'label'     => 'Group',
-            'typeInstance' => new CustomType(
-                function($metadata, $value) {
-                    return $value;
-                },
-                function($metadata, $value) {
-                    return $value->getName();
-                }
-            )
-        ],
-        [
-            'name'      => 'createdAt',
-            'label'     => 'Joined',
-            'type'      => 'datetime',
-            'typeInstance' => new CustomType(
-                function($metadata, $value) {
-                    return $value;
-                },
-                function($metadata, $value) {
-                    return Carbon::instance($value)->diffForHumans();
-                }
-            )
-        ]
     ]);
 });

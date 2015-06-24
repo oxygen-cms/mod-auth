@@ -23,7 +23,7 @@ $header = Header::fromBlueprint(
      ===================== -->
 
 <div class="Block">
-    {{ $header->render() }}
+    {!! $header->render() !!}
 </div>
 
 <!-- =====================
@@ -47,7 +47,7 @@ $header = Header::fromBlueprint(
             if(!$field->editable) {
                 continue;
             }
-            $field = new EditableField($field);
+            $field = new EditableField($field, app('request'));
             $label = new Label($field->getMeta());
             $row = new Row([$label, $field]);
             echo $row->render();

@@ -26,7 +26,7 @@ class RemindersController extends BlueprintController {
      * @param BlueprintManager         $manager
      */
     public function __construct(UserRepositoryInterface $users, BlueprintManager $manager) {
-        parent::__construct($manager, 'Reminders');
+        parent::__construct($manager->get('Reminders'));
         $this->users = $users;
     }
 

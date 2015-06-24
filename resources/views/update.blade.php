@@ -26,7 +26,7 @@
      ===================== -->
 
 <div class="Block">
-    {{ $header->render() }}
+    {!! $header->render() !!}
 </div>
 
 <!-- =====================
@@ -38,7 +38,7 @@
         $form = new Form($blueprint->getAction('putUpdate'));
         $form->setAsynchronous(true)->setWarnBeforeExit(true)->setSubmitOnShortcutKey(true);
 
-        foreach($blueprint->getFields() as $field) {
+        foreach($fields->getFields() as $field) {
             if(!$field->editable) {
                 continue;
             }

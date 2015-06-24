@@ -21,7 +21,7 @@
      ===================== -->
 
 <div class="Block">
-    {{ $header->render() }}
+    {!! $header->render() !!}
 </div>
 
 <!-- =====================
@@ -40,7 +40,7 @@
         ?>
     </div>
     <?php
-        foreach($blueprint->getFields() as $field) {
+        foreach($fields->getFields() as $field) {
             $field = StaticField::fromEntity($field, $user, true);
             $row = new Row([new Label($field->getMeta()), $field]);
             echo $row->render();

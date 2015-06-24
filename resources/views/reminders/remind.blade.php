@@ -1,7 +1,7 @@
 @extends(app('oxygen.layout'))
 
 <?php
-    $bodyClasses = [ 'Login-theme--' . Config::get('oxygen/mod-auth::theme') ];
+use Oxygen\Core\Html\Form\Form;$bodyClasses = [ 'Login-theme--' . Config::get('oxygen/mod-auth::theme') ];
     $usePage = false;
 ?>
 
@@ -21,7 +21,11 @@
         </h2>
     </div>
 
-    {{ Form::open(array('route' => $blueprint->getRouteName('postRemind'), 'class' => 'Form--sendAjax Form--compact')) }}
+    <?php
+        $form = new Form($blueprint->getAction('postRemind'));
+        $form->setAsynchronous(true)->addClass('Form--compact');
+
+        $email = new FieldMetadata();
 
         <div class="Row--visual">
             {{ Form::text('email', null, [

@@ -8,8 +8,11 @@ use Auth;
 use Config;
 use Hash;
 use Event;
+use Illuminate\Contracts\Auth\Guard;
 use Input;
 use Oxygen\Auth\Repository\UserRepositoryInterface;
+use Oxygen\Core\Contracts\Routing\ResponseFactory;
+use OxygenModule\Auth\UserFieldSet;
 use Redirect;
 use Response;
 use URL;
@@ -26,11 +29,12 @@ class AuthController extends BasicCrudController {
     /**
      * Constructs the AuthController.
      *
-     * @param UserRepositoryInterface $repository
-     * @param BlueprintManager        $manager
+     * @param UserRepositoryInterface                    $repository
+     * @param BlueprintManager                           $manager
+     * @param \OxygenModule\Auth\UserFieldSet $fieldSet
      */
-    public function __construct(UserRepositoryInterface $repository, BlueprintManager $manager) {
-        parent::__construct($repository, $manager, 'Auth');
+    public function __construct(UserRepositoryInterface $repository, BlueprintManager $manager, UserFieldSet $fieldSet) {
+        parent::__construct($repository, $manager, $fieldSet, 'Auth');
     }
 
     /**
@@ -39,11 +43,11 @@ class AuthController extends BasicCrudController {
      *
      * @return Response
      */
-    public function getCheck() {
-        if(Auth::check()) {
-            return Redirect::intended(URL::route(Config::get('oxygen/mod-auth::dashboard')));
+    public function getCheck(Guard $auth, ResponseFactory $response) {
+        if($auth-->check()) {
+            return $response->redirectToIntended(URL::route(Config::get('oxygen/mod-auth::dashboard')));
         } else {
-            return Redirect::guest(URL::route('auth.getLogin'));
+            return $response->redirectGuest(URL::route('auth.getLogin'));
         }
     }
 
@@ -130,6 +134,7 @@ class AuthController extends BasicCrudController {
 
         return View::make('oxygen/mod-auth::profile', [
             'user' => $user,
+            'fields' => $this->crudFields,
             'title' => Lang::get('oxygen/mod-auth::ui.profile.title')
         ]);
     }
@@ -145,6 +150,7 @@ class AuthController extends BasicCrudController {
 
         return View::make('oxygen/mod-auth::update', [
             'user' => $user,
+            'fields' => $this->crudFields,
             'title' => Lang::get('oxygen/mod-auth::ui.update.title')
         ]);
     }
@@ -166,8 +172,8 @@ class AuthController extends BasicCrudController {
      *
      * @return Response
      */
-    public function getPreferences() {
-        return Redirect::route('preferences.getView', ['user']);
+    public function getPreferences(ResponseFactory $response) {
+        return $response->redirectToRoute('preferences.getView', ['user']);
     }
 
     /**
