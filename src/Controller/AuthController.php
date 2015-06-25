@@ -19,6 +19,7 @@ use URL;
 use View;
 use Lang;
 use Validator;
+use Preferences;
 
 use Oxygen\Crud\Controller\BasicCrudController;
 use Oxygen\Core\Http\Notification;
