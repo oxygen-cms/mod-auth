@@ -1,7 +1,7 @@
 <?php
 
 
-namespace OxygenModule\Auth;
+namespace OxygenModule\Auth\Fields;
 
 use Carbon\Carbon;
 use Oxygen\Core\Form\FieldSet;

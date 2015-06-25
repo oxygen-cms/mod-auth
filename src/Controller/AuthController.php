@@ -12,7 +12,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Input;
 use Oxygen\Auth\Repository\UserRepositoryInterface;
 use Oxygen\Core\Contracts\Routing\ResponseFactory;
-use OxygenModule\Auth\UserFieldSet;
+use OxygenModule\Auth\Fields\UserFieldSet;
 use Redirect;
 use Response;
 use URL;
