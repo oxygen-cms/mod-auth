@@ -80,7 +80,7 @@ class AuthController extends BasicCrudController {
                 new Notification(
                     Lang::get('oxygen/mod-auth::messages.login.successful', ['name' => Auth::user()->getFullName()])
                 ),
-                ['redirect' => Config::get('oxygen/mod-auth::dashboard'), 'hardRedirect' => true]
+                ['redirect' => Preferences::get('modules.auth::dashboard'), 'hardRedirect' => true]
             );
         } else {
             Event::fire('auth.login.failed', [Input::get('username')]);
