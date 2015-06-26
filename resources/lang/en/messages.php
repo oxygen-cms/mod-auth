@@ -83,10 +83,10 @@ return [
 
     /*
     | ---------------
-    | Account
+    | Password Reminders
     | ---------------
     |
-    | Messages relating to the destruction of the user's account.
+    | Messages relating to password reminders.
     */
 
     'reminder' => [

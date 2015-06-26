@@ -20,7 +20,7 @@ use View;
 use Oxygen\Core\Blueprint\BlueprintManager;
 use Oxygen\Core\Controller\BlueprintController;
 
-class RemindersController extends BlueprintController {
+class PasswordController extends BlueprintController {
 
     /**
      * Constructs the controller.
@@ -39,7 +39,7 @@ class RemindersController extends BlueprintController {
      * @return Response
      */
     public function getRemind() {
-        return View::make('oxygen/mod-auth::reminders.remind', [
+        return View::make('oxygen/mod-auth::password.remind', [
             'title' => Lang::get('oxygen/mod-auth::ui.remind.title')
         ]);
     }
@@ -78,7 +78,7 @@ class RemindersController extends BlueprintController {
             App::abort(404);
         }
 
-        return View::make('oxygen/mod-auth::reminders.reset', [
+        return View::make('oxygen/mod-auth::password.reset', [
             'token' => Input::get('token')
         ]);
     }

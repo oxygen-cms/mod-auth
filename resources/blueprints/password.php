@@ -1,12 +1,12 @@
 <?php
 
-use OxygenModule\Auth\Controller\RemindersController;
+use OxygenModule\Auth\Controller\PasswordController;
 use Oxygen\Core\Action\Factory\ActionFactory;
 
-Blueprint::make('Reminders', function($blueprint) {
-    $blueprint->setController(RemindersController::class);
-    $blueprint->setDisplayName('Reminders', Blueprint::SINGULAR);
-    $blueprint->setDisplayName('Reminders', Blueprint::PLURAL);
+Blueprint::make('Password', function($blueprint) {
+    $blueprint->setController(PasswordController::class);
+    $blueprint->setDisplayName('Password', Blueprint::SINGULAR);
+    $blueprint->setDisplayName('Password', Blueprint::PLURAL);
 
     $factory = new ActionFactory();
 
