@@ -1,7 +1,7 @@
 @extends(app('oxygen.layout'))
 
 <?php
-    $bodyClasses = [ 'Login-theme--' . Config::get('oxygen/mod-auth::theme') ];
+    $bodyClasses = [ 'Login-theme--' . Preferences::get('appearance.auth::theme') ];
     $usePage = false;
 ?>
 
@@ -25,7 +25,7 @@
         <a href="{{{ URL::route($blueprint->getRouteName('getLogin')) }}}" class="Button Button-color--blue">
             @lang('oxygen/mod-auth::ui.logout.loginAgain')
         </a>
-        <a href="{{{ URL::route(Config::get('oxygen/mod-auth::home')) }}}" class="Button Button-color--grey">
+        <a href="{{{ URL::route(Preferences::get('modules.auth::home')) }}}" class="Button Button-color--grey">
             @lang('oxygen/mod-auth::ui.logout.toHome')
         </a>
     </div>
