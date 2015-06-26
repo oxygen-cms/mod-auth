@@ -5,11 +5,15 @@
 <?php
 
     use Oxygen\Core\Form\FieldMetadata as FieldMeta;
-use Oxygen\Core\Html\Form\Label;use Oxygen\Core\Html\Form\Row;use Oxygen\Core\Html\Header\Header;
+    use Oxygen\Core\Html\Form\Form;
+    use Oxygen\Core\Html\Form\Label;
+    use Oxygen\Core\Html\Form\Row;
+    use Oxygen\Core\Html\Header\Header;
     use Oxygen\Core\Html\Form\EditableField;
-    use Oxygen\Core\Html\Form\Footer;use Oxygen\Core\Html\Toolbar\ButtonToolbarItem;use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;
+    use Oxygen\Core\Html\Toolbar\ButtonToolbarItem;
+    use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;
 
-$header = Header::fromBlueprint(
+    $header = Header::fromBlueprint(
         $blueprint,
         Lang::get('oxygen/mod-auth::ui.changePassword.title')
     );
@@ -32,10 +36,8 @@ $header = Header::fromBlueprint(
 
 <div class="Block">
     <?php
-        echo Form::open([
-            'route' => $blueprint->getRouteName('postChangePassword'),
-            'class' => 'Form--sendAjax Form--warnBeforeExit Form--submitOnKeydown'
-        ]);
+        $form = new Form($blueprint->getAction('postChangePassword'));
+        $form->setAsynchronous(true)->setSubmitOnShortcutKey(true)->setWarnBeforeExit(true);
 
         $fields = [
             new FieldMeta('oldPassword', 'password', true),
@@ -50,7 +52,7 @@ $header = Header::fromBlueprint(
             $field = new EditableField($field, app('request'));
             $label = new Label($field->getMeta());
             $row = new Row([$label, $field]);
-            echo $row->render();
+            $form->addContent($row);
         }
 
         $footer = new Row([
@@ -59,9 +61,9 @@ $header = Header::fromBlueprint(
         ]);
         $footer->isFooter = true;
 
-        echo $footer->render();
+        $form->addContent($footer);
 
-        echo Form::close();
+        echo $form->render();
     ?>
 </div>
 
