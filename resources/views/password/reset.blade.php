@@ -1,7 +1,7 @@
 @extends(app('oxygen.layout'))
 
 <?php
-use Oxygen\Core\Form\FieldMetadata;use Oxygen\Core\Html\Form\EditableField;use Oxygen\Core\Html\Form\Form;use Oxygen\Core\Html\Form\Row;use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;use OxygenModule\Auth\Fields\PasswordConfirmationFieldSet;$bodyClasses = [ 'Login-theme--' . Config::get('oxygen/mod-auth::theme') ];
+use Oxygen\Core\Form\FieldMetadata;use Oxygen\Core\Html\Form\EditableField;use Oxygen\Core\Html\Form\Form;use Oxygen\Core\Html\Form\Row;use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;use OxygenModule\Auth\Fields\PasswordConfirmationFieldSet;$bodyClasses = [ 'Login-theme--' . Preferences::get('appearance.auth::theme') ];
     $usePage = false;
 ?>
 
@@ -40,7 +40,7 @@ use Oxygen\Core\Form\FieldMetadata;use Oxygen\Core\Html\Form\EditableField;use O
             $form->addContent($row);
         }
 
-        $submit = new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.reset.submit'));
+        $submit = new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.reset.submit'), 'blue');
         $submit->stretch = true;
         $row = new Row([$submit]);
         $row->isFooter = true;

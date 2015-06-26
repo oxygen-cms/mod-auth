@@ -16,6 +16,7 @@ use Redirect;
 use Response;
 use URL;
 use View;
+use Validator;
 
 use Oxygen\Core\Blueprint\BlueprintManager;
 use Oxygen\Core\Controller\BlueprintController;
@@ -88,8 +89,23 @@ class PasswordController extends BlueprintController {
      *
      * @return Response
      */
-    public function postReset(PasswordBroker $password) {
-        $credentials = Input::only(
+    public function postReset(Request $request, PasswordBroker $password) {
+        $validator = Validator::make(
+            $request,
+            [
+                'token' => 'required',
+                'email' => 'required|email',
+                'password' => 'required|confirmed'
+            ]
+        );
+
+        if(!$validator->passes()) {
+            return Response::notification(
+                new Notification($validator->messages()->first(), Notification::FAILED)
+            );
+        }
+
+        $credentials = $request->only(
             'email', 'password', 'password_confirmation', 'token'
         );
 
@@ -99,13 +115,13 @@ class PasswordController extends BlueprintController {
         });
 
         switch ($response) {
-            case Password::INVALID_PASSWORD:
-            case Password::INVALID_TOKEN:
-            case Password::INVALID_USER:
+            case PasswordBroker::INVALID_PASSWORD:
+            case PasswordBroker::INVALID_TOKEN:
+            case PasswordBroker::INVALID_USER:
                 return Response::notification(
                     new Notification(Lang::get($response), 'failed')
                 );
-            case Password::PASSWORD_RESET:
+            case PasswordBroker::PASSWORD_RESET:
                 return Response::notification(
                     new Notification(Lang::get($response), 'success'),
                     ['redirect' => Blueprint::get('Auth')->getRouteName('getLogin'), 'hardRedirect' => true]
