@@ -4,6 +4,9 @@ namespace OxygenModule\Auth\Controller;
 
 use App;
 use Blueprint;
+use Illuminate\Contracts\Auth\PasswordBroker;
+use Illuminate\Http\Request;
+use Illuminate\Mail\Message;
 use Input;
 use Lang;
 use Oxygen\Auth\Repository\UserRepositoryInterface;
@@ -44,18 +47,25 @@ class RemindersController extends BlueprintController {
     /**
      * Handle a POST request to remind a user of their password.
      *
-     * @return Response
+     * @param \Illuminate\Http\Request $request
+     * @return \Response
      */
-    public function postRemind() {
-        $result = Password::remind(Input::only('email'), function($message) {
+    public function postRemind(PasswordBroker $password, Request $request) {
+        $result = $password->sendResetLink($request->only('email'), function (Message $message) {
             $message->subject(Lang::get('oxygen/mod-auth::messages.reminder.email.subject'));
         });
+        
+        switch ($result) {
+            case PasswordBroker::RESET_LINK_SENT:
+                return Response::notification(
+                    new Notification(Lang::get($result), 'success')
+                );
 
-        $code = $result === Password::INVALID_USER ? 'failed' : 'success';
-
-        return Response::notification(
-            new Notification(Lang::get($result), $code)
-        );
+            case PasswordBroker::INVALID_USER:
+                return Response::notification(
+                    new Notification(Lang::get($result), 'failed')
+                );
+        }
     }
 
     /**

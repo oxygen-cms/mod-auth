@@ -1,7 +1,9 @@
 @extends(app('oxygen.layout'))
 
 <?php
-use Oxygen\Core\Html\Form\Form;$bodyClasses = [ 'Login-theme--' . Config::get('oxygen/mod-auth::theme') ];
+use Oxygen\Core\Form\FieldMetadata;use Oxygen\Core\Html\Form\EditableField;use Oxygen\Core\Html\Form\Form;use Oxygen\Core\Html\Form\Row;use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;
+
+$bodyClasses = [ 'Login-theme--' . Preferences::get('appearance.auth::theme') ];
     $usePage = false;
 ?>
 
@@ -25,28 +27,29 @@ use Oxygen\Core\Html\Form\Form;$bodyClasses = [ 'Login-theme--' . Config::get('o
         $form = new Form($blueprint->getAction('postRemind'));
         $form->setAsynchronous(true)->addClass('Form--compact');
 
-        $email = new FieldMetadata();
+        $email = new FieldMetadata('email', 'text', true);
+        $email->placeholder = 'Email';
+        $email->attributes['class'] = 'Form-input--fullWidth Form-input--transparent';
+        $emailRow = new Row([new EditableField($email, app('request'))]);
+        $emailRow->useDefaults = false;
+        $emailRow->addClass('Row--visual');
+        $form->addContent($emailRow);
 
-        <div class="Row--visual">
-            {{ Form::text('email', null, [
-                'placeholder'   => 'Email',
-                'class'         => 'Form-input--fullWidth Form-input--transparent'
-            ]) }}
-        </div>
+        $submit = new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.remind.submit'), 'blue');
+        $submitRow = new Row([$submit]);
+        $submitRow->isFooter = true;
+        $form->addContent($submitRow);
 
-        <div class="Row Form-footer">
-            <button type="submit" class="Button Button-color--blue Button--stretch">
-                {{{ Lang::get('oxygen/mod-auth::ui.remind.submit') }}}
-            </button>
-        </div>
+        $back = new Row(['<a href="' . e(URL::route(Blueprint::get('Auth')->getRouteName('getLogin'))) . '">' .
+                e(Lang::get('oxygen/mod-auth::ui.remind.backToLogin'))  .'</a>']);
+        $back->useDefaults = false;
+        $back->addClass('Row--visual');
 
-        <div class="Row--visual">
-            <a href="{{{ URL::route(Blueprint::get('Auth')->getRouteName('getLogin')) }}}">
-                @lang('oxygen/mod-auth::ui.remind.backToLogin')
-            </a>
-        </div>
+        $form->addContent($back);
 
-    {{ Form::close() }}
+        echo $form->render();
+
+    ?>
 
 </div>
 

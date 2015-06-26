@@ -39,14 +39,16 @@
         $form->addClass('Form--compact');
 
         $usernameMetadata = new FieldMetadata('username', 'text', true);
-        $usernameMetadata->attributes = ['autocomplete' => 'off', 'placeholder' => 'Username', 'class' => 'Form-input--fullWidth Form-input--transparent'];
+        $usernameMetadata->placeholder = 'Username';
+        $usernameMetadata->attributes = ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth Form-input--transparent'];
         $usernameRow = new Row([new EditableField($usernameMetadata, app('request'))]);
         $usernameRow->useDefaults = false;
         $usernameRow->addClass('Row--visual');
         $form->addContent($usernameRow);
 
         $passwordMetadata = new FieldMetadata('password', 'password', true);
-        $passwordMetadata->attributes = ['autocomplete' => 'off', 'placeholder' => 'Password', 'class' => 'Form-input--fullWidth Form-input--transparent'];
+        $passwordMetadata->placeholder = 'Password';
+        $passwordMetadata->attributes = ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth Form-input--transparent'];
         $passwordRow = new Row([new EditableField($passwordMetadata, app('request'))]);
         $passwordRow->useDefaults = false;
         $passwordRow->addClass('Row--visual');
