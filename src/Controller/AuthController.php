@@ -45,7 +45,7 @@ class AuthController extends BasicCrudController {
      * @return Response
      */
     public function getCheck(Guard $auth, ResponseFactory $response) {
-        if($auth-->check()) {
+        if($auth->check()) {
             return $response->redirectToIntended(URL::route(Config::get('oxygen/mod-auth::dashboard')));
         } else {
             return $response->redirectGuest(URL::route('auth.getLogin'));
