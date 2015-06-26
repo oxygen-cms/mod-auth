@@ -15,7 +15,7 @@ class UserFieldSet extends FieldSet {
      * @return array
      */
     public function createFields() {
-        $this->makeFields([
+        return $this->makeFields([
             [
                 'name'      => 'username',
                 'label'     => 'Username',

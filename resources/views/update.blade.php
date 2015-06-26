@@ -54,7 +54,7 @@
         ]);
         $footer->isFooter = true;
 
-        $form->addContent($row);
+        $form->addContent($footer);
 
         echo $form->render();
     ?>

@@ -32,7 +32,7 @@ class AuthController extends BasicCrudController {
      *
      * @param UserRepositoryInterface                    $repository
      * @param BlueprintManager                           $manager
-     * @param \OxygenModule\Auth\UserFieldSet $fieldSet
+     * @param \OxygenModule\Auth\Fields\UserFieldSet $fieldSet
      */
     public function __construct(UserRepositoryInterface $repository, BlueprintManager $manager, UserFieldSet $fieldSet) {
         parent::__construct($repository, $manager->get('Auth'), $fieldSet);
