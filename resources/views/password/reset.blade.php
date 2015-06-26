@@ -28,7 +28,7 @@ use Oxygen\Core\Form\FieldMetadata;use Oxygen\Core\Html\Form\EditableField;use O
         $form->addClass('Form--compact');
 
         $token = new FieldMetadata('token', 'hidden', true);
-        $tokenRow = new Row([new EditableField($token, app('request'))]);
+        $tokenRow = new Row([new EditableField($token, app('request'), app('request')->get('token'))]);
         $tokenRow->useDefaults = false;
         $form->addContent($tokenRow);
 

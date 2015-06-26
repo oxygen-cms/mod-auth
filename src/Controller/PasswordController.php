@@ -91,7 +91,7 @@ class PasswordController extends BlueprintController {
      */
     public function postReset(Request $request, PasswordBroker $password) {
         $validator = Validator::make(
-            $request,
+            $request->all(),
             [
                 'token' => 'required',
                 'email' => 'required|email',

@@ -29,7 +29,7 @@ class PasswordConfirmationFieldSet extends FieldSet {
                 'attributes' => ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth Form-input--transparent']
             ],
             [
-                'name' => 'passwordConfirmation',
+                'name' => 'password_confirmation',
                 'type' => 'password',
                 'editable' => true,
                 'placeholder' => 'Confirm Password',
