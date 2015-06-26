@@ -1,7 +1,7 @@
 @extends(app('oxygen.layout'))
 
 <?php
-    $bodyClasses = [ 'Login-theme--' . Config::get('oxygen/mod-auth::theme') ];
+use Oxygen\Core\Form\FieldMetadata;use Oxygen\Core\Html\Form\EditableField;use Oxygen\Core\Html\Form\Form;use Oxygen\Core\Html\Form\Row;use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;use OxygenModule\Auth\Fields\PasswordConfirmationFieldSet;$bodyClasses = [ 'Login-theme--' . Config::get('oxygen/mod-auth::theme') ];
     $usePage = false;
 ?>
 
@@ -21,40 +21,34 @@
         </h2>
     </div>
 
-    {{ Form::open(array('route' => $blueprint->getRouteName('postReset'), 'class' => 'Form--sendAjax Form--compact')) }}
+    <?php
 
-        <input type="hidden" name="token" value="{{ $token }}">
+        $form = new Form($blueprint->getAction('postReset'));
+        $form->setAsynchronous(true);
+        $form->addClass('Form--compact');
 
-        <div class="Row--visual">
-            {{ Form::text('email', null, [
-                'placeholder'   => 'Email',
-                'class'         => 'Form-input--fullWidth Form-input--transparent'
-            ]) }}
-        </div>
+        $token = new FieldMetadata('token', 'hidden', true);
+        $tokenRow = new Row([new EditableField($token, app('request'))]);
+        $tokenRow->useDefaults = false;
+        $form->addContent($tokenRow);
 
-        <div class="Row--visual">
-            {{ Form::password('password', [
-                'autocomplete'  => 'off',
-                'placeholder'   => 'Password',
-                'class'         => 'Form-input--fullWidth Form-input--transparent'
-            ]) }}
-        </div>
+        foreach(app(PasswordConfirmationFieldSet::class)->getFields() as $field) {
+            $editable = new EditableField($field, app('request'));
+            $row = new Row([$editable]);
+            $row->useDefaults = false;
+            $row->addClass('Row--visual');
+            $form->addContent($row);
+        }
 
-        <div class="Row--visual">
-            {{ Form::password('password_confirmation', [
-                'autocomplete'  => 'off',
-                'placeholder'   => 'Password Again',
-                'class'         => 'Form-input--fullWidth Form-input--transparent'
-            ]) }}
-        </div>
+        $submit = new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.reset.submit'));
+        $submit->stretch = true;
+        $row = new Row([$submit]);
+        $row->isFooter = true;
+        $form->addContent($row);
 
-        <div class="Row Form-footer">
-            <button type="submit" class="Button Button-color--blue Button--stretch">
-                {{{ Lang::get('oxygen/mod-auth::ui.reset.submit') }}}
-            </button>
-        </div>
+        echo $form->render();
 
-    {{ Form::close() }}
+    ?>
 
 </div>
 

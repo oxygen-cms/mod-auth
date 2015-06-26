@@ -7,7 +7,7 @@
 		<h2>Password Reset</h2>
 
 		<div>
-			To reset your password, complete this form: {{ URL::route(Blueprint::get('Reminders')->getRouteName('getReset'), ['token' => $token]) }}.<br/>
+			To reset your password, complete this form: {{ URL::route(Blueprint::get('Password')->getRouteName('getReset'), ['token' => $token]) }}.<br/>
 			This link will expire in {{ Config::get('auth.reminder.expire', 60) }} minutes.
 		</div>
 	</body>

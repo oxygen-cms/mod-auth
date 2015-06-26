@@ -36,6 +36,7 @@ $bodyClasses = [ 'Login-theme--' . Preferences::get('appearance.auth::theme') ];
         $form->addContent($emailRow);
 
         $submit = new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.remind.submit'), 'blue');
+        $submit->stretch = true;
         $submitRow = new Row([$submit]);
         $submitRow->isFooter = true;
         $form->addContent($submitRow);

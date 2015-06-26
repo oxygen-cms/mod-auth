@@ -62,7 +62,7 @@
         $rememberMeRow->useDefaults = false;
         $rememberMeRow->addClass('Row--visual');
         $rememberMeRow->addItem(
-                '<a href="' . e(URL::route(Blueprint::get('Reminders')->getRouteName('getRemind'))) . '">' .
+                '<a href="' . e(URL::route(Blueprint::get('Password')->getRouteName('getRemind'))) . '">' .
                     Lang::get('oxygen/mod-auth::ui.login.forgotPassword') .
                 '</a>'
         );

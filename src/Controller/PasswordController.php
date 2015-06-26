@@ -29,7 +29,7 @@ class PasswordController extends BlueprintController {
      * @param BlueprintManager         $manager
      */
     public function __construct(UserRepositoryInterface $users, BlueprintManager $manager) {
-        parent::__construct($manager->get('Reminders'));
+        parent::__construct($manager->get('Password'));
         $this->users = $users;
     }
 
@@ -88,12 +88,12 @@ class PasswordController extends BlueprintController {
      *
      * @return Response
      */
-    public function postReset() {
+    public function postReset(PasswordBroker $password) {
         $credentials = Input::only(
             'email', 'password', 'password_confirmation', 'token'
         );
 
-        $response = Password::reset($credentials, function($user, $password) {
+        $response = $password->reset($credentials, function($user, $password) {
             $user->setPassword($password);
             $this->users->persist($user);
         });
