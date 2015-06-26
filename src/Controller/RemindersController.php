@@ -54,7 +54,7 @@ class RemindersController extends BlueprintController {
         $result = $password->sendResetLink($request->only('email'), function (Message $message) {
             $message->subject(Lang::get('oxygen/mod-auth::messages.reminder.email.subject'));
         });
-        
+
         switch ($result) {
             case PasswordBroker::RESET_LINK_SENT:
                 return Response::notification(
