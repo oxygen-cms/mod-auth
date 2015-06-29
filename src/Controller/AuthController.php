@@ -9,9 +9,11 @@ use Config;
 use Hash;
 use Event;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Input;
 use Oxygen\Auth\Repository\UserRepositoryInterface;
 use Oxygen\Core\Contracts\Routing\ResponseFactory;
+use Oxygen\Preferences\PreferencesManager;
 use OxygenModule\Auth\Fields\UserFieldSet;
 use Redirect;
 use Response;
@@ -44,11 +46,11 @@ class AuthController extends BasicCrudController {
      *
      * @return Response
      */
-    public function getCheck(Guard $auth, ResponseFactory $response) {
+    public function getCheck(Guard $auth, UrlGenerator $url, ResponseFactory $response, PreferencesManager $preferences) {
         if($auth->check()) {
-            return $response->redirectToIntended(URL::route(Config::get('oxygen/mod-auth::dashboard')));
+            return $response->redirectToIntended($url->route($preferences->get('modules.auth::dashboard')));
         } else {
-            return $response->redirectGuest(URL::route('auth.getLogin'));
+            return $response->redirectGuest($url->route('auth.getLogin'));
         }
     }
 
