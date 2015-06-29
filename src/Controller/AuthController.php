@@ -159,13 +159,14 @@ class AuthController extends BasicCrudController {
     /**
      * Updates a the user.
      *
-     * @param mixed $foo useless param
-     * @return Response
+     * @param mixed                                          $foo useless param
+     * @param \Oxygen\Core\Contracts\Routing\ResponseFactory $response
+     * @return \Illuminate\Http\Response
      */
-    public function putUpdate($foo = null) {
+    public function putUpdate($foo = null, ResponseFactory $response) {
         $user = Auth::user();
 
-        return parent::putUpdate($user);
+        return parent::putUpdate($user, $response);
     }
 
     /**
