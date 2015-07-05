@@ -57,7 +57,7 @@ class FullUserFieldSet extends FieldSet {
                     'blueprint'  => 'Group',
                     'allowNull' => false,
                     'repository' => function() {
-                        return App::make(GroupRepositoryInterface::class);
+                        return app(GroupRepositoryInterface::class);
                     },
                     'nameField' => 'name'
                 ],

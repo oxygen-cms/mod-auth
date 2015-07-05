@@ -2,6 +2,7 @@
 
 namespace OxygenModule\Auth\Controller;
 
+use Illuminate\Http\Request;
 use Oxygen\Core\Form\FieldMetadata;
 use Oxygen\Core\Html\Form\EditableField;
 use Oxygen\Core\Html\Form\Label;
@@ -74,11 +75,11 @@ class UsersController extends SoftDeleteCrudController {
      *
      * @return \Illuminate\Http\Response
      */
-    public function postCreate() {
+    public function postCreate(Request $input) {
         try {
             $item = $this->getItem($this->repository->make());
-            $item->fromArray($this->transformInput(Input::except(['_method', '_token', 'password'])));
-            $item->setPassword(Input::get('password'));
+            $item->fromArray($this->transformInput($input->except(['_method', '_token', 'password'])));
+            $item->setPassword($input->get('password'));
             $this->repository->persist($item);
 
             return Response::notification(
