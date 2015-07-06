@@ -31,18 +31,6 @@ return [
 
     /*
     | ---------------
-    | Permissions
-    | ---------------
-    |
-    | Messages related to the permissions system.
-    */
-
-    'permissions' => [
-        'noPermissions' => 'Insufficient Permissions',
-    ],
-
-    /*
-    | ---------------
     | Preferences
     | ---------------
     |
