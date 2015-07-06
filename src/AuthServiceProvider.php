@@ -2,13 +2,13 @@
 
 namespace OxygenModule\Auth;
 
+use Illuminate\Support\ServiceProvider;
 use Oxygen\Core\Blueprint\BlueprintManager;
 use Oxygen\Core\Html\Navigation\Navigation;
-use Oxygen\Data\BaseServiceProvider;
 use Oxygen\Preferences\PreferencesManager;
 use Oxygen\Preferences\Transformer\JavascriptTransformer;
 
-class AuthServiceProvider extends BaseServiceProvider {
+class AuthServiceProvider extends ServiceProvider {
 
 	/**
 	 * Indicates if loading of the provider is deferred.
