@@ -5,7 +5,7 @@ use Oxygen\Core\Action\Factory\ActionFactory;
 
 Blueprint::make('Password', function($blueprint) {
     $blueprint->setController(PasswordController::class);
-    $blueprint->setBothDisplayNames('Password');
+    $blueprint->disablePluralForm();
 
     $factory = new ActionFactory();
 

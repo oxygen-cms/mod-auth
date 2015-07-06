@@ -10,6 +10,7 @@ use Oxygen\Core\Html\Dialog\Dialog;
 
 Blueprint::make('Auth', function($blueprint) {
     $blueprint->setController(AuthController::class);
+    $blueprint->setPluralName('Auth');
     $blueprint->setDisplayName('Profile');
     $blueprint->setPluralDisplayName('Auth');
     $blueprint->setIcon('lock');
