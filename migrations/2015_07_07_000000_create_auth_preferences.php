@@ -4,14 +4,16 @@ use Illuminate\Database\Migrations\Migration;
 use Oxygen\Preferences\Loader\Database\PreferenceRepositoryInterface;
 use Oxygen\Preferences\Repository;
 
+use App;
+
 class CreateAuthPreferences extends Migration {
 
     /**
      * Run the migrations.
-     *
-     * @param \Oxygen\Preferences\Loader\Database\PreferenceRepositoryInterface $preferences
      */
-    public function up(PreferenceRepositoryInterface $preferences) {
+    public function up() {
+        $preferences = App::make(PreferenceRepositoryInterface::class);
+
         $item = $preferences->make();
         $item->setKey('appearance.auth');
         $data = new Repository([]);
@@ -30,11 +32,12 @@ class CreateAuthPreferences extends Migration {
 
     /**
      * Reverse the migrations.
-     *
-     * @param \Oxygen\Preferences\Loader\Database\PreferenceRepositoryInterface $preferences
      */
-    public function down(PreferenceRepositoryInterface $preferences) {
-        $preferences->delete($preferences->findByKey('appearance.auth'));
-        $preferences->delete($preferences->findByKey('modules.auth'));
+    public function down() {
+        $preferences = App::make(PreferenceRepositoryInterface::class);
+
+        $preferences->delete($preferences->findByKey('appearance.auth'), false);
+        $preferences->delete($preferences->findByKey('modules.auth'), false);
+        $preferences->flush();
     }
 }
