@@ -10,6 +10,7 @@ use Hash;
 use Event;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Routing\UrlGenerator;
+use Session;
 use Input;
 use Oxygen\Auth\Repository\UserRepositoryInterface;
 use Oxygen\Core\Contracts\Routing\ResponseFactory;
@@ -79,11 +80,13 @@ class AuthController extends BasicCrudController {
         ], $remember)) {
             Event::fire('auth.login.successful', [Auth::user()]);
 
+            $path = Session::pull('url.intended', Preferences::get('modules.auth::dashboard'));
+
             return Response::notification(
                 new Notification(
                     Lang::get('oxygen/mod-auth::messages.login.successful', ['name' => Auth::user()->getFullName()])
                 ),
-                ['redirect' => Preferences::get('modules.auth::dashboard'), 'hardRedirect' => true]
+                ['redirect' => $path, 'hardRedirect' => true]
             );
         } else {
             Event::fire('auth.login.failed', [Input::get('username')]);
