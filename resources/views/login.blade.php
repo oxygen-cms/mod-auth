@@ -7,7 +7,7 @@
     use Oxygen\Core\Html\Form\Row;
     use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;
 
-    $bodyClasses = [ 'Body--noScroll', 'Login--isHidden', 'Login-bodyTransition', 'Login-theme--' . Preferences::get('appearance.auth::theme') ];
+    $bodyClasses = [ 'Body--noScroll', 'Login--isHidden', 'Login-bodyTransition', 'Login-theme--' . Preferences::get('appearance.auth::theme', 'autumn') ];
     $usePage = false;
 ?>
 
