@@ -2,6 +2,7 @@
 
 use Oxygen\Crud\BlueprintTrait\SoftDeleteCrudTrait;
 use OxygenModule\Auth\Controller\GroupsController;
+use Oxygen\Crud\BlueprintTrait\SearchableCrudTrait;
 
 Blueprint::make('Group', function($blueprint) {
     $blueprint->setController(GroupsController::class);
@@ -9,7 +10,7 @@ Blueprint::make('Group', function($blueprint) {
 
     $blueprint->setToolbarOrders([
         'section' => [
-            'getCreate', 'getTrash'
+            'getList.search', 'getCreate', 'getTrash'
         ],
         'item' => [
             'getUpdate,More' => ['getInfo', 'deleteDelete', 'postRestore', 'deleteForce']
@@ -17,4 +18,5 @@ Blueprint::make('Group', function($blueprint) {
     ]);
 
     $blueprint->useTrait(new SoftDeleteCrudTrait());
+    $blueprint->useTrait(new SearchableCrudTrait());
 });

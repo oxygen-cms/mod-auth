@@ -2,6 +2,7 @@
 
 use Oxygen\Crud\BlueprintTrait\SoftDeleteCrudTrait;
 use OxygenModule\Auth\Controller\UsersController;
+use Oxygen\Crud\BlueprintTrait\SearchableCrudTrait;
 
 Blueprint::make('User', function($blueprint) {
     $blueprint->setController(UsersController::class);
@@ -9,7 +10,7 @@ Blueprint::make('User', function($blueprint) {
 
     $blueprint->setToolbarOrders([
         'section' => [
-            'getCreate', 'getTrash'
+            'getList.search', 'getCreate', 'getTrash'
         ],
         'item' => [
             'getUpdate,More' => ['getInfo', 'deleteDelete', 'postRestore', 'deleteForce']
@@ -17,4 +18,5 @@ Blueprint::make('User', function($blueprint) {
     ]);
 
     $blueprint->useTrait(new SoftDeleteCrudTrait());
+    $blueprint->useTrait(new SearchableCrudTrait());
 });
