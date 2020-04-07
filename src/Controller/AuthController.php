@@ -2,28 +2,23 @@
 
 namespace OxygenModule\Auth\Controller;
 
-use Exception;
-
-use Auth;
-use Config;
-use Hash;
-use Event;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Contracts\Routing\UrlGenerator;
-use Session;
-use Input;
+use Illuminate\Events\Dispatcher;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Session\Store;
+use Illuminate\Validation\Factory;
+use Illuminate\View\View;
+use Oxygen\Auth\Entity\User;
 use Oxygen\Auth\Repository\UserRepositoryInterface;
+use Oxygen\Core\Blueprint\BlueprintNotFoundException;
 use Oxygen\Core\Contracts\Routing\ResponseFactory;
+use Oxygen\Preferences\PreferenceNotFoundException;
 use Oxygen\Preferences\PreferencesManager;
 use OxygenModule\Auth\Fields\UserFieldSet;
-use Redirect;
-use Response;
-use URL;
-use View;
-use Lang;
-use Validator;
-use Preferences;
-
 use Oxygen\Crud\Controller\BasicCrudController;
 use Oxygen\Core\Http\Notification;
 use Oxygen\Core\Blueprint\BlueprintManager;
@@ -33,9 +28,10 @@ class AuthController extends BasicCrudController {
     /**
      * Constructs the AuthController.
      *
-     * @param UserRepositoryInterface                    $repository
-     * @param BlueprintManager                           $manager
-     * @param \OxygenModule\Auth\Fields\UserFieldSet $fieldSet
+     * @param UserRepositoryInterface $repository
+     * @param BlueprintManager $manager
+     * @param UserFieldSet $fieldSet
+     * @throws BlueprintNotFoundException
      */
     public function __construct(UserRepositoryInterface $repository, BlueprintManager $manager, UserFieldSet $fieldSet) {
         parent::__construct($repository, $manager->get('Auth'), $fieldSet);
@@ -45,7 +41,8 @@ class AuthController extends BasicCrudController {
      * If logged in, redirect to the dashboard.
      * If not, show the login page.
      *
-     * @return Response
+     * @return RedirectResponse
+     * @throws PreferenceNotFoundException
      */
     public function getCheck(Guard $auth, UrlGenerator $url, ResponseFactory $response, PreferencesManager $preferences) {
         if($auth->check()) {
@@ -58,42 +55,50 @@ class AuthController extends BasicCrudController {
     /**
      * Show the login form.
      *
-     * @return Response
+     * @return View
      */
     public function getLogin() {
-        return View::make('oxygen/mod-auth::login', [
-            'title' => Lang::get('oxygen/mod-auth::ui.login.title')
+        return view('oxygen/mod-auth::login', [
+            'title' => __('oxygen/mod-auth::ui.login.title')
         ]);
     }
 
     /**
      * Login action.
      *
+     * @param Request $request
+     * @param StatefulGuard $auth
+     * @param Dispatcher $events
+     * @param Store $session
+     * @param PreferencesManager $preferences
      * @return Response
+     * @throws PreferenceNotFoundException
      */
-    public function postLogin() {
-        $remember = Input::get('remember') === '1' ? true : false;
+    public function postLogin(Request $request, StatefulGuard $auth, Dispatcher $events, Store $session, PreferencesManager $preferences) {
+        $remember = $request->input('remember') === '1' ? true : false;
 
-        if(Auth::attempt([
-            'username' => Input::get('username'),
-            'password' => Input::get('password')
+        if($auth->attempt([
+            'username' => $request->input('username'),
+            'password' => $request->input('password')
         ], $remember)) {
-            Event::fire('auth.login.successful', [Auth::user()]);
+            $events->dispatch('auth.login.successful', [$auth->user()]);
 
-            $path = Session::pull('url.intended', Preferences::get('modules.auth::dashboard'));
+            $path = $session->pull('url.intended', $preferences->get('modules.auth::dashboard'));
 
-            return Response::notification(
+            $user = $auth->user();
+            assert($user instanceof User);
+            return notify(
                 new Notification(
-                    Lang::get('oxygen/mod-auth::messages.login.successful', ['name' => Auth::user()->getFullName()])
+                    __('oxygen/mod-auth::messages.login.successful', ['name' => $user->getFullName()])
                 ),
                 ['redirect' => $path, 'hardRedirect' => true]
             );
         } else {
-            Event::fire('auth.login.failed', [Input::get('username')]);
+            $events->dispatch('auth.login.failed', [$request->input('username')]);
 
-            return Response::notification(
+            return notify(
                 new Notification(
-                    Lang::get('oxygen/mod-auth::messages.login.failed'),
+                    __('oxygen/mod-auth::messages.login.failed'),
                     Notification::FAILED
                 )
             );
@@ -102,18 +107,20 @@ class AuthController extends BasicCrudController {
 
     /**
      * Log the user out.
-     *
-     * @return Response
+     * 
+     * @param StatefulGuard $auth
+     * @param Dispatcher $events
+     * @return mixed
      */
-    public function postLogout() {
-        $user = Auth::user();
+    public function postLogout(StatefulGuard $auth, Dispatcher $events) {
+        $user = $auth->user();
 
-        Auth::logout();
+        $auth->logout();
 
-        Event::fire('auth.logout.successful', [$user]);
+        $events->dispatch('auth.logout.successful', [$user]);
 
-        return Response::notification(
-            new Notification(Lang::get('oxygen/mod-auth::messages.logout.successful')),
+        return notify(
+            new Notification(__('oxygen/mod-auth::messages.logout.successful')),
             ['redirect' => 'auth.getLogoutSuccess', 'hardRedirect' => true] // redirect without SmoothState
         );
     }
@@ -121,63 +128,63 @@ class AuthController extends BasicCrudController {
     /**
      * Show the logout success message.
      *
-     * @return Response
+     * @return View
      */
     public function getLogoutSuccess() {
-        return View::make('oxygen/mod-auth::logout', [
-            'title' => Lang::get('oxygen/mod-auth::ui.logout.title')
+        return view('oxygen/mod-auth::logout', [
+            'title' => __('oxygen/mod-auth::ui.logout.title')
         ]);
     }
 
     /**
      * Show the current user's profile.
      *
-     * @param mixed $foo useless param
-     * @return Response
+     * @param Guard $auth
+     * @return View
      */
-    public function getInfo($foo = null) {
-        $user = Auth::user();
+    public function getInfo(Guard $auth) {
+        $user = $auth->user();
 
-        return View::make('oxygen/mod-auth::profile', [
+        return view('oxygen/mod-auth::profile', [
             'user' => $user,
             'fields' => $this->crudFields,
-            'title' => Lang::get('oxygen/mod-auth::ui.profile.title')
+            'title' => __('oxygen/mod-auth::ui.profile.title')
         ]);
     }
 
     /**
      * Shows the update form.
      *
-     * @param mixed $foo useless param
-     * @return Response
+     * @param Guard $auth
+     * @return View
      */
-    public function getUpdate($foo = null) {
-        $user = Auth::user();
+    public function getUpdate(Guard $auth) {
+        $user = $auth->user();
 
-        return View::make('oxygen/mod-auth::update', [
+        return view('oxygen/mod-auth::update', [
             'user' => $user,
             'fields' => $this->crudFields,
-            'title' => Lang::get('oxygen/mod-auth::ui.update.title')
+            'title' => __('oxygen/mod-auth::ui.update.title')
         ]);
     }
 
     /**
      * Updates a the user.
      *
-     * @param mixed                                          $foo useless param
-     * @param \Oxygen\Core\Contracts\Routing\ResponseFactory $response
-     * @return \Illuminate\Http\Response
+     * @param Guard $auth
+     * @param Request $request
+     * @return Response
      */
-    public function putUpdate($foo = null, ResponseFactory $response) {
-        $user = Auth::user();
+    public function putUpdate(Guard $auth, Request $request) {
+        $user = $auth->user();
 
-        return parent::putUpdate($user, $response);
+        return parent::putUpdate($user, $request);
     }
 
     /**
      * Redirects the user to the preferences.
      *
-     * @return Response
+     * @return RedirectResponse
      */
     public function getPreferences(ResponseFactory $response) {
         return $response->redirectToRoute('preferences.getView', ['user']);
@@ -186,27 +193,31 @@ class AuthController extends BasicCrudController {
     /**
      * Change password form.
      *
-     * @return Response
+     * @return View
      */
-    public function getChangePassword() {
-        $user = Auth::user();
+    public function getChangePassword(Guard $auth) {
+        $user = $auth->user();
 
-        return View::make('oxygen/mod-auth::changePassword', [
+        return view('oxygen/mod-auth::changePassword', [
             'user' => $user,
-            'title' => Lang::get('oxygen/mod-auth::ui.changePassword.title')
+            'title' => __('oxygen/mod-auth::ui.changePassword.title')
         ]);
     }
 
     /**
      * Change the user's password.
      *
+     * @param Guard $auth
+     * @param Request $request
+     * @param Factory $validationFactory
      * @return Response
+     * @throws \Oxygen\Data\Exception\InvalidEntityException
      */
-    public function postChangePassword() {
-        $user = Auth::user();
-        $input = Input::all();
+    public function postChangePassword(Guard $auth, Request $request, Factory $validationFactory) {
+        $user = $auth->user();
+        $input = $request->all();
 
-        $validator = Validator::make(
+        $validator = $validationFactory->make(
             $input,
             [
                 'oldPassword' => ['required', 'hashes_to:' . $user->getPassword()],
@@ -219,12 +230,12 @@ class AuthController extends BasicCrudController {
             $user->setPassword($input['password']);
             $this->repository->persist($user);
 
-            return Response::notification(
-                new Notification(Lang::get('oxygen/mod-auth::messages.password.changed')),
+            return notify(
+                new Notification(__('oxygen/mod-auth::messages.password.changed')),
                 ['redirect' => $this->blueprint->getRouteName('getInfo')]
             );
         } else {
-            return Response::notification(
+            return notify(
                 new Notification($validator->messages()->first(), Notification::FAILED)
             );
         }
@@ -235,12 +246,12 @@ class AuthController extends BasicCrudController {
      *
      * @return Response
      */
-    public function deleteForce() {
-        $user = Auth::user();
+    public function deleteForce(Guard $auth) {
+        $user = $auth->user();
         $this->repository->delete($user);
 
-        return Response::notification(
-            new Notification(Lang::get('oxygen/mod-auth::messages.account.terminated')),
+        return notify(
+            new Notification(__('oxygen/mod-auth::messages.account.terminated')),
             ['redirect' => $this->blueprint->getRouteName('getLogin'), 'hardRedirect' => true]
         );
     }

@@ -63,12 +63,12 @@
         $rememberMeRow->addClass('Row--visual');
         $rememberMeRow->addItem(
                 '<a href="' . e(URL::route(Blueprint::get('Password')->getRouteName('getRemind'))) . '">' .
-                    Lang::get('oxygen/mod-auth::ui.login.forgotPassword') .
+                    __('oxygen/mod-auth::ui.login.forgotPassword') .
                 '</a>'
         );
         $form->addContent($rememberMeRow);
 
-        $submit = new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.login.submit'), 'blue');
+        $submit = new SubmitToolbarItem(__('oxygen/mod-auth::ui.login.submit'), 'blue');
         $submit->stretch = true;
         $submitRow = new Row([$submit]);
         $submitRow->useDefaults = false;

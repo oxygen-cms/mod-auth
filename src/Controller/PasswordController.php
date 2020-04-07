@@ -2,32 +2,34 @@
 
 namespace OxygenModule\Auth\Controller;
 
-use App;
-use Blueprint;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
+use Oxygen\Core\Blueprint\BlueprintNotFoundException;
+use Oxygen\Core\Support\Facades\Blueprint;
 use Illuminate\Contracts\Auth\PasswordBroker;
+use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
-use Input;
-use Lang;
 use Oxygen\Auth\Repository\UserRepositoryInterface;
 use Oxygen\Core\Http\Notification;
-use Password;
-use Redirect;
-use Response;
-use URL;
-use View;
-use Validator;
 
 use Oxygen\Core\Blueprint\BlueprintManager;
 use Oxygen\Core\Controller\BlueprintController;
+use ReflectionException;
 
 class PasswordController extends BlueprintController {
+    /**
+     * @var UserRepositoryInterface
+     */
+    private $users;
 
     /**
      * Constructs the controller.
      *
-     * @param UserRepositoryInterface  $users
-     * @param BlueprintManager         $manager
+     * @param UserRepositoryInterface $users
+     * @param BlueprintManager $manager
+     * @throws BlueprintNotFoundException
+     * @throws ReflectionException
      */
     public function __construct(UserRepositoryInterface $users, BlueprintManager $manager) {
         parent::__construct($manager->get('Password'));
@@ -37,34 +39,38 @@ class PasswordController extends BlueprintController {
     /**
      * Display the password reminder view.
      *
-     * @return Response
+     * @return View
      */
     public function getRemind() {
-        return View::make('oxygen/mod-auth::password.remind', [
-            'title' => Lang::get('oxygen/mod-auth::ui.remind.title')
+        return view('oxygen/mod-auth::password.remind', [
+            'title' => __('oxygen/mod-auth::ui.remind.title')
         ]);
     }
 
     /**
      * Handle a POST request to remind a user of their password.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Response
+     * @param Request $request
+     * @return Response
      */
     public function postRemind(PasswordBroker $password, Request $request) {
-        $result = $password->sendResetLink($request->only('email'), function (Message $message) {
-            $message->subject(Lang::get('oxygen/mod-auth::messages.reminder.email.subject'));
-        });
+        $result = $password->sendResetLink($request->only('email'));
+
+        /*
+         * TODO: create a notification for this
+         * function (Message $message) {
+         *   $message->subject(__('oxygen/mod-auth::messages.reminder.email.subject'));
+         * }
+         */
 
         switch ($result) {
             case PasswordBroker::RESET_LINK_SENT:
-                return Response::notification(
-                    new Notification(Lang::get($result), 'success')
+                return notify(
+                    new Notification(__($result), Notification::SUCCESS)
                 );
-
-            case PasswordBroker::INVALID_USER:
-                return Response::notification(
-                    new Notification(Lang::get($result), 'failed')
+            default:
+                return notify(
+                    new Notification(__($result), Notification::FAILED)
                 );
         }
     }
@@ -72,15 +78,15 @@ class PasswordController extends BlueprintController {
     /**
      * Display the password reset view for the given token.
      *
-     * @return Response
+     * @return View
      */
-    public function getReset() {
-        if(!Input::has('token')) {
-            App::abort(404);
+    public function getReset(Request $request) {
+        if(!$request->has('token')) {
+            abort(404);
         }
 
-        return View::make('oxygen/mod-auth::password.reset', [
-            'token' => Input::get('token')
+        return view('oxygen/mod-auth::password.reset', [
+            'token' => $request->input('token')
         ]);
     }
 
@@ -89,8 +95,8 @@ class PasswordController extends BlueprintController {
      *
      * @return Response
      */
-    public function postReset(Request $request, PasswordBroker $password) {
-        $validator = Validator::make(
+    public function postReset(Request $request, PasswordBroker $password, Factory $validationFactory) {
+        $validator = $validationFactory->make(
             $request->all(),
             [
                 'token' => 'required',
@@ -100,7 +106,7 @@ class PasswordController extends BlueprintController {
         );
 
         if(!$validator->passes()) {
-            return Response::notification(
+            return notify(
                 new Notification($validator->messages()->first(), Notification::FAILED)
             );
         }
@@ -115,16 +121,14 @@ class PasswordController extends BlueprintController {
         });
 
         switch ($response) {
-            case PasswordBroker::INVALID_PASSWORD:
-            case PasswordBroker::INVALID_TOKEN:
-            case PasswordBroker::INVALID_USER:
-                return Response::notification(
-                    new Notification(Lang::get($response), 'failed')
-                );
             case PasswordBroker::PASSWORD_RESET:
-                return Response::notification(
-                    new Notification(Lang::get($response), 'success'),
+                return notify(
+                    new Notification(__($response), Notification::SUCCESS),
                     ['redirect' => Blueprint::get('Auth')->getRouteName('getLogin'), 'hardRedirect' => true]
+                );
+            default:
+                return notify(
+                    new Notification(__($response), Notification::FAILED)
                 );
         }
     }

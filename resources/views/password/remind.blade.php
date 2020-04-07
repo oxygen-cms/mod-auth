@@ -35,14 +35,14 @@ $bodyClasses = [ 'Login-theme--' . Preferences::get('appearance.auth::theme') ];
         $emailRow->addClass('Row--visual');
         $form->addContent($emailRow);
 
-        $submit = new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.remind.submit'), 'blue');
+        $submit = new SubmitToolbarItem(__('oxygen/mod-auth::ui.remind.submit'), 'blue');
         $submit->stretch = true;
         $submitRow = new Row([$submit]);
         $submitRow->isFooter = true;
         $form->addContent($submitRow);
 
         $back = new Row(['<a href="' . e(URL::route(Blueprint::get('Auth')->getRouteName('getLogin'))) . '">' .
-                e(Lang::get('oxygen/mod-auth::ui.remind.backToLogin'))  .'</a>']);
+                e(__('oxygen/mod-auth::ui.remind.backToLogin'))  .'</a>']);
         $back->useDefaults = false;
         $back->addClass('Row--visual');
 

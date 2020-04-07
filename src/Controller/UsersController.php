@@ -52,7 +52,7 @@ class UsersController extends SoftDeleteCrudController {
     /**
      * Shows the create form.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function getCreate() {
         $extraFields = [];
@@ -62,9 +62,9 @@ class UsersController extends SoftDeleteCrudController {
 
         $extraFields[] = new Row([new Label($password), $field]);
 
-        return View::make('oxygen/crud::basic.create', [
+        return view('oxygen/crud::basic.create', [
             'item' => $this->repository->make(),
-            'title' => Lang::get('oxygen/crud::ui.resource.create'),
+            'title' => __('oxygen/crud::ui.resource.create'),
             'fields' => $this->crudFields,
             'extraFields' => $extraFields
         ]);
@@ -82,12 +82,12 @@ class UsersController extends SoftDeleteCrudController {
             $item->setPassword($input->get('password'));
             $this->repository->persist($item);
 
-            return Response::notification(
-                new Notification(Lang::get('oxygen/crud::messages.basic.created')),
+            return notify(
+                new Notification(__('oxygen/crud::messages.basic.created')),
                 ['redirect' => $this->blueprint->getRouteName('getList')]
             );
         } catch(InvalidEntityException $e) {
-            return Response::notification(
+            return notify(
                 new Notification($e->getErrors()->first(), Notification::FAILED),
                 ['input' => true]
             );

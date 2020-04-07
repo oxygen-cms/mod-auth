@@ -15,7 +15,7 @@
 
     $header = Header::fromBlueprint(
         $blueprint,
-        Lang::get('oxygen/mod-auth::ui.changePassword.title')
+        __('oxygen/mod-auth::ui.changePassword.title')
     );
 
     $header->setBackLink(URL::route($blueprint->getRouteName('getInfo')));
@@ -56,8 +56,8 @@
         }
 
         $footer = new Row([
-            new ButtonToolbarItem(Lang::get('oxygen/mod-auth::ui.changePassword.close'), $blueprint->getAction('getInfo')),
-            new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.changePassword.save'))
+            new ButtonToolbarItem(__('oxygen/mod-auth::ui.changePassword.close'), $blueprint->getAction('getInfo')),
+            new SubmitToolbarItem(__('oxygen/mod-auth::ui.changePassword.save'))
         ]);
         $footer->isFooter = true;
 

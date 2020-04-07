@@ -40,7 +40,7 @@ use Oxygen\Core\Form\FieldMetadata;use Oxygen\Core\Html\Form\EditableField;use O
             $form->addContent($row);
         }
 
-        $submit = new SubmitToolbarItem(Lang::get('oxygen/mod-auth::ui.reset.submit'), 'blue');
+        $submit = new SubmitToolbarItem(__('oxygen/mod-auth::ui.reset.submit'), 'blue');
         $submit->stretch = true;
         $row = new Row([$submit]);
         $row->isFooter = true;

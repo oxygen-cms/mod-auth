@@ -119,6 +119,6 @@ Blueprint::make('Auth', function($blueprint) {
         'label' => 'Terminate Account',
         'color' => 'red',
         'icon' => 'trash-o',
-        'dialog' => new Dialog(Lang::get('oxygen/mod-auth::dialogs.terminateAccount'))
+        'dialog' => new Dialog(__('oxygen/mod-auth::dialogs.terminateAccount'))
     ]);
 });
