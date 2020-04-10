@@ -2,14 +2,12 @@
 
 namespace OxygenModule\Auth\Controller;
 
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Session\Store;
 use Illuminate\Validation\Factory;
 use Illuminate\View\View;
 use Oxygen\Auth\Entity\User;
@@ -41,11 +39,15 @@ class AuthController extends BasicCrudController {
      * If logged in, redirect to the dashboard.
      * If not, show the login page.
      *
+     * @param AuthManager $auth
+     * @param UrlGenerator $url
+     * @param ResponseFactory $response
+     * @param PreferencesManager $preferences
      * @return RedirectResponse
      * @throws PreferenceNotFoundException
      */
-    public function getCheck(Guard $auth, UrlGenerator $url, ResponseFactory $response, PreferencesManager $preferences) {
-        if($auth->check()) {
+    public function getCheck(AuthManager $auth, UrlGenerator $url, ResponseFactory $response, PreferencesManager $preferences) {
+        if($auth->guard()->check()) {
             return $response->redirectToIntended($url->route($preferences->get('modules.auth::dashboard')));
         } else {
             return $response->redirectGuest($url->route('auth.getLogin'));
@@ -67,25 +69,24 @@ class AuthController extends BasicCrudController {
      * Login action.
      *
      * @param Request $request
-     * @param StatefulGuard $auth
+     * @param AuthManager $auth
      * @param Dispatcher $events
-     * @param Store $session
      * @param PreferencesManager $preferences
      * @return Response
      * @throws PreferenceNotFoundException
      */
-    public function postLogin(Request $request, StatefulGuard $auth, Dispatcher $events, Store $session, PreferencesManager $preferences) {
+    public function postLogin(Request $request, AuthManager $auth, Dispatcher $events, PreferencesManager $preferences) {
         $remember = $request->input('remember') === '1' ? true : false;
 
-        if($auth->attempt([
+        if($auth->guard()->attempt([
             'username' => $request->input('username'),
             'password' => $request->input('password')
         ], $remember)) {
-            $events->dispatch('auth.login.successful', [$auth->user()]);
+            $events->dispatch('auth.login.successful', [$auth->guard()->user()]);
 
-            $path = $session->pull('url.intended', $preferences->get('modules.auth::dashboard'));
+            $path = $request->session()->pull('url.intended', $preferences->get('modules.auth::dashboard'));
 
-            $user = $auth->user();
+            $user = $auth->guard()->user();
             assert($user instanceof User);
             return notify(
                 new Notification(
@@ -108,14 +109,14 @@ class AuthController extends BasicCrudController {
     /**
      * Log the user out.
      * 
-     * @param StatefulGuard $auth
+     * @param AuthManager $auth
      * @param Dispatcher $events
      * @return mixed
      */
-    public function postLogout(StatefulGuard $auth, Dispatcher $events) {
-        $user = $auth->user();
+    public function postLogout(AuthManager $auth, Dispatcher $events) {
+        $user = $auth->guard()->user();
 
-        $auth->logout();
+        $auth->guard()->logout();
 
         $events->dispatch('auth.logout.successful', [$user]);
 
@@ -139,11 +140,11 @@ class AuthController extends BasicCrudController {
     /**
      * Show the current user's profile.
      *
-     * @param Guard $auth
+     * @param null $user
      * @return View
      */
-    public function getInfo(Guard $auth) {
-        $user = $auth->user();
+    public function getInfo($user = null) {
+        $user = auth()->user();
 
         return view('oxygen/mod-auth::profile', [
             'user' => $user,
@@ -155,11 +156,11 @@ class AuthController extends BasicCrudController {
     /**
      * Shows the update form.
      *
-     * @param Guard $auth
+     * @param null $user
      * @return View
      */
-    public function getUpdate(Guard $auth) {
-        $user = $auth->user();
+    public function getUpdate($user = null) {
+        $user = auth()->user();
 
         return view('oxygen/mod-auth::update', [
             'user' => $user,
@@ -171,14 +172,15 @@ class AuthController extends BasicCrudController {
     /**
      * Updates a the user.
      *
-     * @param Guard $auth
      * @param Request $request
+     * @param null $user
      * @return Response
+     * @throws \Exception
      */
-    public function putUpdate(Guard $auth, Request $request) {
-        $user = $auth->user();
+    public function putUpdate(Request $request, $user = null) {
+        $user = auth()->user();
 
-        return parent::putUpdate($user, $request);
+        return parent::putUpdate($request, $user);
     }
 
     /**
@@ -195,8 +197,8 @@ class AuthController extends BasicCrudController {
      *
      * @return View
      */
-    public function getChangePassword(Guard $auth) {
-        $user = $auth->user();
+    public function getChangePassword(AuthManager $auth) {
+        $user = $auth->guard()->user();
 
         return view('oxygen/mod-auth::changePassword', [
             'user' => $user,
@@ -207,14 +209,14 @@ class AuthController extends BasicCrudController {
     /**
      * Change the user's password.
      *
-     * @param Guard $auth
+     * @param AuthManager $auth
      * @param Request $request
      * @param Factory $validationFactory
      * @return Response
      * @throws \Oxygen\Data\Exception\InvalidEntityException
      */
-    public function postChangePassword(Guard $auth, Request $request, Factory $validationFactory) {
-        $user = $auth->user();
+    public function postChangePassword(AuthManager $auth, Request $request, Factory $validationFactory) {
+        $user = $auth->guard()->user();
         $input = $request->all();
 
         $validator = $validationFactory->make(
@@ -246,8 +248,8 @@ class AuthController extends BasicCrudController {
      *
      * @return Response
      */
-    public function deleteForce(Guard $auth) {
-        $user = $auth->user();
+    public function deleteForce(AuthManager $auth) {
+        $user = $auth->guard()->user();
         $this->repository->delete($user);
 
         return notify(

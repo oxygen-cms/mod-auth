@@ -4,7 +4,7 @@ use Oxygen\Crud\BlueprintTrait\SoftDeleteCrudTrait;
 use OxygenModule\Auth\Controller\GroupsController;
 use Oxygen\Crud\BlueprintTrait\SearchableCrudTrait;
 
-Blueprint::make('Group', function($blueprint) {
+Blueprint::make('Group', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
     $blueprint->setController(GroupsController::class);
     $blueprint->setIcon('users');
 

@@ -18,22 +18,19 @@ class PasswordConfirmationFieldSet extends FieldSet {
                 'name' => 'email',
                 'type' => 'text',
                 'editable' => true,
-                'placeholder' => 'Email',
-                'attributes' => ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth Form-input--transparent']
+                'attributes' => ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth']
             ],
             [
                 'name' => 'password',
                 'type' => 'password',
                 'editable' => true,
-                'placeholder' => 'Password',
-                'attributes' => ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth Form-input--transparent']
+                'attributes' => ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth']
             ],
             [
                 'name' => 'password_confirmation',
                 'type' => 'password',
                 'editable' => true,
-                'placeholder' => 'Confirm Password',
-                'attributes' => ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth Form-input--transparent']
+                'attributes' => ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth']
             ],
         ]);
     }

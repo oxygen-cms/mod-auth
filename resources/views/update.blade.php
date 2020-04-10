@@ -42,7 +42,7 @@
             if(!$field->editable) {
                 continue;
             }
-            $field = EditableField::fromEntity($field, app('request'), $user);
+            $field = EditableField::fromEntity($field, $user);
             $label = new Label($field->getMeta());
             $row = new Row([$label, $field]);
             $form->addContent($row);

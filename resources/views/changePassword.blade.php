@@ -49,7 +49,7 @@
             if(!$field->editable) {
                 continue;
             }
-            $field = new EditableField($field, app('request'));
+            $field = new EditableField($field);
             $label = new Label($field->getMeta());
             $row = new Row([$label, $field]);
             $form->addContent($row);

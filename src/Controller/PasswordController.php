@@ -80,7 +80,7 @@ class PasswordController extends BlueprintController {
      *
      * @return View
      */
-    public function getReset(Request $request) {
+    public function reset(Request $request) {
         if(!$request->has('token')) {
             abort(404);
         }

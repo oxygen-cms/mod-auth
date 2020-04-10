@@ -66,7 +66,7 @@ class AuthServiceProvider extends ServiceProvider {
         $this->app['events']->listen('oxygen.layout.body.after', function() {
 		    if($this->app['auth']->check()) {
 		        $javascriptTransformer = new JavascriptTransformer();
-		        echo $javascriptTransformer->fromRepository($this->app['auth']->user()->getPreferences(), 'user');
+		        echo $javascriptTransformer->fromRepository($this->app['auth']->user()->getPreferences(), 'window.Oxygen.user');
 		    }
         });
     }

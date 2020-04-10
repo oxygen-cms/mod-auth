@@ -12,8 +12,9 @@
 return [
 
     'login' => [
-        'welcome'        => 'Welcome to Oxygen',
-        'scrollToForm'   => 'Login...',
+        'welcome'        => 'Oxygen CMS',
+        'welcomeSubtitle' => 'Administration Panel',
+        'scrollToForm'   => 'Login',
         'title'          => 'Login',
         'submit'         => 'Login',
         'forgotPassword' => 'Forgot Password'

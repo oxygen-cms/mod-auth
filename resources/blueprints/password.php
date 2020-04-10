@@ -3,7 +3,7 @@
 use OxygenModule\Auth\Controller\PasswordController;
 use Oxygen\Core\Action\Factory\ActionFactory;
 
-Blueprint::make('Password', function($blueprint) {
+Blueprint::make('Password', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
     $blueprint->setController(PasswordController::class);
     $blueprint->disablePluralForm();
 
@@ -12,26 +12,28 @@ Blueprint::make('Password', function($blueprint) {
     $blueprint->makeAction([
         'name' => 'getRemind',
         'pattern' => 'remind',
-        'middleware' => ['oxygen.guest']
+        'middleware' => ['web', 'oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([
         'name' => 'postRemind',
         'pattern' => 'remind',
         'method' => 'POST',
-        'middleware' => ['oxygen.guest']
+        'middleware' => ['web', 'oxygen.guest']
     ], $factory);
 
+    // named `reset` to make it compatible with Laravel's default password reset notification,
+    // which wants to redirect to the `password.reset` route
     $blueprint->makeAction([
-        'name' => 'getReset',
+        'name' => 'reset',
         'pattern' => 'reset',
-        'middleware' => ['oxygen.guest']
+        'middleware' => ['web', 'oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([
         'name' => 'postReset',
         'pattern' => 'logout',
         'method' => 'POST',
-        'middleware' => ['oxygen.guest']
+        'middleware' => ['web', 'oxygen.guest']
     ], $factory);
 });

@@ -8,7 +8,7 @@ use Oxygen\Core\Contracts\CoreConfiguration;
 
 use Oxygen\Core\Html\Dialog\Dialog;
 
-Blueprint::make('Auth', function($blueprint) {
+Blueprint::make('Auth', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
     $blueprint->setController(AuthController::class);
     $blueprint->setPluralName('Auth');
     $blueprint->setDisplayName('Profile');
@@ -24,20 +24,21 @@ Blueprint::make('Auth', function($blueprint) {
     $blueprint->makeAction([
         'name' => 'getCheck',
         'pattern' => '/',
-        'group' => new Group('auth', app(CoreConfiguration::class)->getAdminURIPrefix())
+        'group' => new Group('auth', app(CoreConfiguration::class)->getAdminURIPrefix()),
+        'middleware' => ['web']
     ], $factory);
 
     $blueprint->makeAction([
         'name' => 'getLogin',
         'pattern' => 'login',
-        'middleware' => ['oxygen.guest']
+        'middleware' => ['web', 'oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([
         'name' => 'postLogin',
         'pattern' => 'login',
         'method'  => 'POST',
-        'middleware' => ['oxygen.guest']
+        'middleware' => ['web', 'oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([
@@ -54,7 +55,7 @@ Blueprint::make('Auth', function($blueprint) {
     $blueprint->makeAction([
         'name' => 'getLogoutSuccess',
         'pattern' => 'logout',
-        'middleware' => ['oxygen.guest']
+        'middleware' => ['web', 'oxygen.guest']
     ], $factory);
 
     $blueprint->makeAction([

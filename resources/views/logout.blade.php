@@ -13,15 +13,15 @@
             Logout
      ===================== -->
 
-<div class="Block Block--mini Block--transparent Block--centered">
+<div class="Block Block--mini Block--centered">
 
-    <div class="Header Header--noBorder">
-        <h2 class="Header-title heading-beta flex-item">
+    <div class="Header Header--normal Header--condensedWidthCenter">
+        <h2 class="Header-title heading-beta">
             @lang('oxygen/mod-auth::ui.logout.title')
         </h2>
     </div>
 
-    <div class="Row--visual">
+    <div class="Row Row--flexSpaceBetween">
         <a href="{{{ URL::route($blueprint->getRouteName('getLogin')) }}}" class="Button Button-color--blue">
             @lang('oxygen/mod-auth::ui.logout.loginAgain')
         </a>

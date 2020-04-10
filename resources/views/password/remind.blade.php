@@ -15,10 +15,10 @@ $bodyClasses = [ 'Login-theme--' . Preferences::get('appearance.auth::theme') ];
             Logout
      ===================== -->
 
-<div class="Block Block--mini Block--transparent Block--centered">
+<div class="Block Block--mini Block--centered">
 
-    <div class="Header Header--noBorder">
-        <h2 class="Header-title heading-beta flex-item">
+    <div class="Header Header--normal Header--condensedWidthCenter">
+        <h2 class="Header-title heading-beta">
             @lang('oxygen/mod-auth::ui.remind.title')
         </h2>
     </div>
@@ -30,7 +30,7 @@ $bodyClasses = [ 'Login-theme--' . Preferences::get('appearance.auth::theme') ];
         $email = new FieldMetadata('email', 'text', true);
         $email->placeholder = 'Email';
         $email->attributes['class'] = 'Form-input--fullWidth Form-input--transparent';
-        $emailRow = new Row([new EditableField($email, app('request'))]);
+        $emailRow = new Row([new EditableField($email)]);
         $emailRow->useDefaults = false;
         $emailRow->addClass('Row--visual');
         $form->addContent($emailRow);

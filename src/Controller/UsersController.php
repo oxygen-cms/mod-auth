@@ -58,7 +58,7 @@ class UsersController extends SoftDeleteCrudController {
         $extraFields = [];
 
         $password = new FieldMetadata('password', 'password', true);
-        $field = new EditableField($password, app('request'));
+        $field = new EditableField($password);
 
         $extraFields[] = new Row([new Label($password), $field]);
 
