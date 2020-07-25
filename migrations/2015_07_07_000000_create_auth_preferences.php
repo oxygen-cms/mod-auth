@@ -16,6 +16,7 @@ class CreateAuthPreferences extends Migration {
         $item->setKey('appearance.auth');
         $data = new Repository([]);
         $data->set('theme', 'autumn');
+        $data->set('logo', '/vendor/oxygen/ui-theme/img/icon/apple-touch-icon-180x180.png');
         $item->setPreferences($data);
         $preferences->persist($item, false);
 

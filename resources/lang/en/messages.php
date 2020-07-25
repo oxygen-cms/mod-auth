@@ -25,6 +25,11 @@ return [
         'failed'               => 'Incorrect Username or Password'
     ],
 
+    'twoFactor' => [
+        'success' => 'Code accepted',
+        'failure' => 'Sorry, but that\'s not a valid code. Try again'
+    ],
+
     'logout' => [
         'successful'          => 'Logout Successful',
     ],

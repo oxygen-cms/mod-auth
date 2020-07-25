@@ -1,94 +1,45 @@
-@extends(app('oxygen.layout'))
-
-<?php
-    use Oxygen\Core\Form\FieldMetadata;
-    use Oxygen\Core\Html\Form\EditableField;
-    use Oxygen\Core\Html\Form\Form;
-    use Oxygen\Core\Html\Form\Row;
-    use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;
-
-    $bodyClasses = [ 'Body--noScroll', 'Login--isHidden', 'Login-bodyTransition', 'Login-theme--' . Preferences::get('appearance.auth::theme', 'autumn') ];
-    $usePage = false;
-?>
+@extends('oxygen/ui-theme::layout.main')
 
 @section('content')
+    <div id="app">
+        <div class="login-fullscreen login-theme-{{ Preferences::get('appearance.auth::theme', 'autumn') }}">
+            <div class="box container">
+                <div class="login-welcome">
+                    <img src="{{ Preferences::get('appearance.auth::logo') }}" class="login-logo" />
 
-<div class="Login-background Login-background--sharp"></div>
-<div class="Login-background Login-background--blur"></div>
+                    <h1 class="subtitle has-text-centered" style="font-variant: small-caps;">
+                        @lang('oxygen/mod-auth::ui.login.welcomeSubtitle')
+                    </h1>
+                </div>
+                
+                <br>
 
-<div class="Login-welcome Block--mini">
-    <h1 class="heading-alpha Text--alignCenter">
-        @lang('oxygen/mod-auth::ui.login.welcome')
-    </h1>
-    <h1 class="heading-beta Text--alignCenter">
-        @lang('oxygen/mod-auth::ui.login.welcomeSubtitle')
-    </h1>
-</div>
+                <form action="{{ URL::route($blueprint->getAction('postLogin')->getName()) }}" method="post">
 
-<div class="Login-message Block--verticallyCentered">
-    <button type="button" class="Button Button--border Login-scrollDown">
-        @lang('oxygen/mod-auth::ui.login.scrollToForm')
-    </button>
-</div>
+                    @csrf
 
-<div class="Login-form Block Block--mini Block--centered">
+                    <b-field label="Username" label-position="inside">
+                        <b-input name="username"></b-input>
+                    </b-field>
 
-<!--    <div class="Header Header--normal Header--condensedWidthCenter">-->
-<!--        <h2 class="heading-beta">-->
-<!--            @lang('oxygen/mod-auth::ui.login.title')-->
-<!--        </h2>-->
-<!--    </div>-->
+                    <b-field label="Password" label-position="inside">
+                        <b-input type="password" name="password"></b-input>
+                    </b-field>
+                    
+                    <br>
 
-    <?php
-        $form = new Form($blueprint->getAction('postLogin'));
-        $form->setAsynchronous(true);
-        $form->addClass('Form--compact');
+                    <div class="login-justify-content">
+                        <b-button type="is-primary" tag="input" native-type="submit" value="Login"></b-button>
+                        <a href="{{ URL::route(Blueprint::get('Password')->getRouteName('getRemind')) }}">
+                            @lang('oxygen/mod-auth::ui.login.forgotPassword')
+                        </a>
+                    </div>
 
-        $usernameMetadata = new FieldMetadata('username', 'text', true);
-        // $usernameMetadata->placeholder = 'Username';
-        $usernameMetadata->attributes = ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth'];
-        $label = new \Oxygen\Core\Html\Form\Label($usernameMetadata);
-        $usernameRow = new Row([$label, new EditableField($usernameMetadata)]);
-        $usernameRow->useDefaults = false;
-        $usernameRow->addClass('Row--visual');
-        $form->addContent($usernameRow);
+                </form>
 
-        $passwordMetadata = new FieldMetadata('password', 'password', true);
-        // $passwordMetadata->placeholder = 'Password';
-        $passwordMetadata->attributes = ['autocomplete' => 'off', 'class' => 'Form-input--fullWidth'];
-        $label = new \Oxygen\Core\Html\Form\Label($passwordMetadata);
-        $passwordRow = new Row([$label, new EditableField($passwordMetadata)]);
-        $passwordRow->useDefaults = false;
-        $passwordRow->addClass('Row--visual');
-        $form->addContent($passwordRow);
+            </div>
+        </div>
+    </div>
 
-        $rememberMe = new FieldMetadata('remember', 'checkbox', true);
-        $rememberMe->label = 'Remember Me';
-        $rememberMe->options['on'] = '1';
-        $rememberMeEditable = new EditableField($rememberMe);
-        $rememberMeRow = new Row([$rememberMeEditable, '<br><br>']);
-        $rememberMeRow->useDefaults = false;
-        $rememberMeRow->addClass('Row--visual');
-        $rememberMeRow->addClass('Row--flexSpaceBetween');
-        $rememberMeRow->addItem(
-                '<a href="' . e(URL::route(Blueprint::get('Password')->getRouteName('getRemind'))) . '">' .
-                    __('oxygen/mod-auth::ui.login.forgotPassword') .
-                '</a>'
-        );
-        $form->addContent($rememberMeRow);
-
-        $submit = new SubmitToolbarItem(__('oxygen/mod-auth::ui.login.submit'), 'blue');
-        $submit->stretch = true;
-        $submitRow = new Row([$submit]);
-        $submitRow->useDefaults = false;
-        $submitRow->addClass('Row--visual');
-        $submitRow->isFooter = true;
-        $form->addContent($submitRow);
-
-        echo $form->render();
-
-    ?>
-
-</div>
-
+    <script src="/vendor/oxygen/ui-theme/js/spaLogin.js"></script>
 @stop

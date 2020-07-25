@@ -28,6 +28,10 @@ Preferences::register('appearance.auth', function($schema) {
                     'validationRules' => [
                         'in:' . implode(',', array_keys($themes))
                     ]
+                ],
+                [
+                    'name' => 'logo',
+                    'type' => 'text'
                 ]
             ]
         ]

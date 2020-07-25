@@ -50,8 +50,13 @@ return [
 
     'remind' => [
         'title'         => 'Forgot Password',
-        'backToLogin'   => 'Back to the Login Page',
+        'backToLogin'   => 'Back to Login',
         'submit'        => 'Send Reminder Email'
+    ],
+
+    'prepareTwoFactorAuth' => [
+        'title' => 'You need to set up two-factor authentication for this account',
+        'submit' => 'Confirm',
     ],
 
     'reset' => [

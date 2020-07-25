@@ -2,6 +2,7 @@
 
 namespace OxygenModule\Auth\Controller;
 
+use DarkGhostHunter\Laraguard\Http\Controllers\Confirms2FACode;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Events\Dispatcher;
@@ -20,8 +21,11 @@ use OxygenModule\Auth\Fields\UserFieldSet;
 use Oxygen\Crud\Controller\BasicCrudController;
 use Oxygen\Core\Http\Notification;
 use Oxygen\Core\Blueprint\BlueprintManager;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class AuthController extends BasicCrudController {
+
+    use Confirms2FACode;
 
     /**
      * Constructs the AuthController.
@@ -78,30 +82,89 @@ class AuthController extends BasicCrudController {
     public function postLogin(Request $request, AuthManager $auth, Dispatcher $events, PreferencesManager $preferences) {
         $remember = $request->input('remember') === '1' ? true : false;
 
-        if($auth->guard()->attempt([
-            'username' => $request->input('username'),
-            'password' => $request->input('password')
-        ], $remember)) {
-            $events->dispatch('auth.login.successful', [$auth->guard()->user()]);
+        try {
+            if ($auth->guard()->attempt([
+                'username' => $request->input('username'),
+                'password' => $request->input('password')
+            ], $remember)) {
+                $events->dispatch('auth.login.successful', [$auth->guard()->user()]);
 
-            $path = $request->session()->pull('url.intended', $preferences->get('modules.auth::dashboard'));
+                $user = $auth->guard()->user();
+                assert($user instanceof User);
+                return notify(
+                    new Notification(
+                        __('oxygen/mod-auth::messages.login.successful', ['name' => $user->getFullName()])
+                    ),
+                    ['redirect' => $this->getPostLoginRedirectPath($request, $preferences), 'hardRedirect' => true]
+                );
+            } else {
+                $events->dispatch('auth.login.failed', [$request->input('username')]);
 
-            $user = $auth->guard()->user();
-            assert($user instanceof User);
+                return notify(
+                    new Notification(
+                        __('oxygen/mod-auth::messages.login.failed'),
+                        Notification::FAILED
+                    )
+                );
+            }
+        } catch(HttpResponseException $exception) {
+            // TODO: increment login attempts to force login throttling
+            // $this->incrementLoginAttempts($request);
+            throw $exception;
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param PreferencesManager $preferences
+     * @return mixed
+     * @throws PreferenceNotFoundException
+     */
+    protected function getPostLoginRedirectPath(Request $request, PreferencesManager $preferences) {
+        $path = $request->session()->pull('url.intended', $preferences->get('modules.auth::dashboard'));
+        return $path;
+    }
+
+    /**
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|View
+     */
+    public function getTwoFactorAuthNotice() {
+        return redirect(route('auth.getPrepareTwoFactor'));
+    }
+
+    /**
+     * Begins to set-up two-factor authentication for this user.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|View
+     */
+    public function getPrepareTwoFactor(Request $request) {
+        $secret = $request->user()->createTwoFactorAuth();
+
+        return view('oxygen/mod-auth::prepareTwoFactor', [
+            'as_qr_code' => $secret->toQr(),     // As QR Code
+            'as_uri'     => $secret->toUri(),    // As "otpauth://" URI.
+            'as_string'  => $secret->toString(), // As a string
+        ]);
+    }
+
+    public function postConfirmTwoFactor(Request $request, PreferencesManager $preferences) {
+        $code = str_replace(' ', '', $request->input('2fa_code'));
+        $activated = $request->user()->confirmTwoFactorAuth($code);
+        
+        if(!$activated) {
             return notify(
                 new Notification(
-                    __('oxygen/mod-auth::messages.login.successful', ['name' => $user->getFullName()])
-                ),
-                ['redirect' => $path, 'hardRedirect' => true]
-            );
-        } else {
-            $events->dispatch('auth.login.failed', [$request->input('username')]);
-
-            return notify(
-                new Notification(
-                    __('oxygen/mod-auth::messages.login.failed'),
+                    __('oxygen/mod-auth::messages.twoFactor.failure'),
                     Notification::FAILED
                 )
+            );
+        } else {
+            return notify(
+                new Notification(
+                    __('oxygen/mod-auth::messages.twoFactor.success')
+                ),
+                ['redirect' => $this->getPostLoginRedirectPath($request, $preferences), 'hardRedirect' => true ]
             );
         }
     }

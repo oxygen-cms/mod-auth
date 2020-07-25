@@ -1,57 +1,46 @@
-@extends(app('oxygen.layout'))
-
-<?php
-use Oxygen\Core\Form\FieldMetadata;use Oxygen\Core\Html\Form\EditableField;use Oxygen\Core\Html\Form\Form;use Oxygen\Core\Html\Form\Row;use Oxygen\Core\Html\Toolbar\SubmitToolbarItem;
-
-$bodyClasses = [ 'Login-theme--' . Preferences::get('appearance.auth::theme') ];
-    $usePage = false;
-?>
+@extends('oxygen/ui-theme::layout.main')
 
 @section('content')
 
-<div class="Login-background Login-background--sharp"></div>
+    <div id="app">
+        <div class="login-fullscreen login-theme-{{ Preferences::get('appearance.auth::theme', 'autumn') }}">
+            <div class="box container">
+                <div class="login-welcome">
+                    <img src="{{ Preferences::get('appearance.auth::logo') }}" class="login-logo" />
 
-<!-- =====================
-            Logout
-     ===================== -->
+                    <h1 class="subtitle has-text-centered" style="font-variant: small-caps;">
+                        @lang('oxygen/mod-auth::ui.login.welcomeSubtitle')
+                    </h1>
+                </div>
+                <div class="login-welcome">
+                    <h1 class="subtitle has-text-centered">
+                        @lang('oxygen/mod-auth::ui.remind.title')
+                    </h1>
+                </div>
 
-<div class="Block Block--mini Block--centered">
+                <form action="{{ URL::route($blueprint->getAction('postRemind')->getName()) }}" method="post">
 
-    <div class="Header Header--normal Header--condensedWidthCenter">
-        <h2 class="Header-title heading-beta">
-            @lang('oxygen/mod-auth::ui.remind.title')
-        </h2>
+                    @csrf
+
+                    <b-field label="Email Address" label-position="inside">
+                        <b-input name="email" type="email"></b-input>
+                    </b-field>
+
+                    <br>
+
+                    <div class="login-justify-content">
+                        <b-button type="is-primary" tag="input" native-type="submit" value="@lang('oxygen/mod-auth::ui.remind.submit')"></b-button>
+                        <a href=" {{ URL::route(Blueprint::get('Auth')->getRouteName('getLogin')) }} ">
+                            @lang('oxygen/mod-auth::ui.remind.backToLogin')
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
     </div>
 
-    <?php
-        $form = new Form($blueprint->getAction('postRemind'));
-        $form->setAsynchronous(true)->addClass('Form--compact');
-
-        $email = new FieldMetadata('email', 'text', true);
-        $email->placeholder = 'Email';
-        $email->attributes['class'] = 'Form-input--fullWidth Form-input--transparent';
-        $emailRow = new Row([new EditableField($email)]);
-        $emailRow->useDefaults = false;
-        $emailRow->addClass('Row--visual');
-        $form->addContent($emailRow);
-
-        $submit = new SubmitToolbarItem(__('oxygen/mod-auth::ui.remind.submit'), 'blue');
-        $submit->stretch = true;
-        $submitRow = new Row([$submit]);
-        $submitRow->isFooter = true;
-        $form->addContent($submitRow);
-
-        $back = new Row(['<a href="' . e(URL::route(Blueprint::get('Auth')->getRouteName('getLogin'))) . '">' .
-                e(__('oxygen/mod-auth::ui.remind.backToLogin'))  .'</a>']);
-        $back->useDefaults = false;
-        $back->addClass('Row--visual');
-
-        $form->addContent($back);
-
-        echo $form->render();
-
-    ?>
-
-</div>
+    <script src="/vendor/oxygen/ui-theme/js/spaLogin.js"></script>
 
 @stop

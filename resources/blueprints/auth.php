@@ -29,6 +29,19 @@ Blueprint::make('Auth', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
     ], $factory);
 
     $blueprint->makeAction([
+        'name' => 'getPrepareTwoFactor',
+        'pattern' => 'prepareTwoFactor',
+        'middleware' => ['web', 'oxygen.auth', '2fa.disabled']
+    ], $factory);
+
+    $blueprint->makeAction([
+        'name' => 'postConfirmTwoFactor',
+        'pattern' => 'confirmTwoFactor',
+        'method' => 'POST',
+        'middleware' => ['web', 'oxygen.auth', '2fa.disabled']
+    ], $factory);
+
+    $blueprint->makeAction([
         'name' => 'getLogin',
         'pattern' => 'login',
         'middleware' => ['web', 'oxygen.guest']
@@ -44,8 +57,9 @@ Blueprint::make('Auth', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
     $blueprint->makeAction([
         'name' => 'postLogout',
         'pattern' => 'logout',
-        'method' => 'POST'
-    ]);
+        'method' => 'POST',
+        'middleware' => ['web', 'oxygen.auth']
+    ], $factory);
     $blueprint->makeToolbarItem([
         'action' => 'postLogout',
         'label' => 'Logout',

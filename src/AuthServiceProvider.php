@@ -8,6 +8,7 @@ use Oxygen\Core\Database\AutomaticMigrator;
 use Oxygen\Core\Html\Navigation\Navigation;
 use Oxygen\Preferences\PreferencesManager;
 use Oxygen\Preferences\Transformer\JavascriptTransformer;
+use OxygenModule\Auth\Controller\AuthController;
 
 class AuthServiceProvider extends ServiceProvider {
 
@@ -26,6 +27,8 @@ class AuthServiceProvider extends ServiceProvider {
 	public function boot() {
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'oxygen/mod-auth');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'oxygen/mod-auth');
+
+        $this->loadRoutesFrom(__DIR__ . '/../resources/routes.php');
 
         $this->publishes([
             __DIR__ . '/../resources/lang' => base_path('resources/lang/vendor/oxygen/mod-auth'),
