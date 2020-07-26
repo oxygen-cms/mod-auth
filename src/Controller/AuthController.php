@@ -9,6 +9,7 @@ use Illuminate\Events\Dispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Session\SessionManager;
 use Illuminate\Validation\Factory;
 use Illuminate\View\View;
 use Oxygen\Auth\Entity\User;
@@ -176,10 +177,15 @@ class AuthController extends BasicCrudController {
      * @param Dispatcher $events
      * @return mixed
      */
-    public function postLogout(AuthManager $auth, Dispatcher $events) {
+    public function postLogout(AuthManager $auth, SessionManager $session, Dispatcher $events) {
         $user = $auth->guard()->user();
 
         $auth->guard()->logout();
+        // NOTE: flushing session on logout appears to fix a subtle bug where
+        // logging out from one user, then attempting to login again,
+        // would error out and cause a HTTP 403 error to be returned (when using two factor auth)
+        // see: Illuminate\Session\Middleware\AuthenticateSession line 55
+        $session->flush();
 
         $events->dispatch('auth.logout.successful', [$user]);
 
