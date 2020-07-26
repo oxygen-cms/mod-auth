@@ -6,11 +6,13 @@ use DarkGhostHunter\Laraguard\Http\Controllers\Confirms2FACode;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Session\SessionManager;
 use Illuminate\Validation\Factory;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Oxygen\Auth\Entity\User;
 use Oxygen\Auth\Repository\UserRepositoryInterface;
@@ -27,6 +29,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 class AuthController extends BasicCrudController {
 
     use Confirms2FACode;
+    use ThrottlesLogins;
 
     /**
      * Constructs the AuthController.
@@ -71,6 +74,15 @@ class AuthController extends BasicCrudController {
     }
 
     /**
+     * Required for throttling login attempts.
+     *
+     * @return string
+     */
+    protected function username() {
+        return 'username';
+    }
+
+    /**
      * Login action.
      *
      * @param Request $request
@@ -79,11 +91,17 @@ class AuthController extends BasicCrudController {
      * @param PreferencesManager $preferences
      * @return Response
      * @throws PreferenceNotFoundException
+     * @throws ValidationException
      */
     public function postLogin(Request $request, AuthManager $auth, Dispatcher $events, PreferencesManager $preferences) {
         $remember = $request->input('remember') === '1' ? true : false;
 
         try {
+            if($this->hasTooManyLoginAttempts($request)) {
+                $this->fireLockoutEvent($request);
+                $this->sendLockoutResponse($request);
+            }
+            
             if ($auth->guard()->attempt([
                 'username' => $request->input('username'),
                 'password' => $request->input('password')
@@ -99,6 +117,8 @@ class AuthController extends BasicCrudController {
                     ['redirect' => $this->getPostLoginRedirectPath($request, $preferences), 'hardRedirect' => true]
                 );
             } else {
+                $this->incrementLoginAttempts($request);
+                
                 $events->dispatch('auth.login.failed', [$request->input('username')]);
 
                 return notify(
@@ -109,8 +129,7 @@ class AuthController extends BasicCrudController {
                 );
             }
         } catch(HttpResponseException $exception) {
-            // TODO: increment login attempts to force login throttling
-            // $this->incrementLoginAttempts($request);
+            $this->incrementLoginAttempts($request);
             throw $exception;
         }
     }

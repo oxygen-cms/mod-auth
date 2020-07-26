@@ -39,18 +39,6 @@
                 <b-field label="2FA Code" label-position="inside">
                     <b-input name="{{ $input }}" id="{{ $input }}" type="number" placeholder="e.g.: 123456" minlength="6" required></b-input>
                 </b-field>
-                
-<!--                <div class="Row Row--visual">-->
-<!--                    <input type="number"-->
-<!--                           class="@if($error) is-invalid @endif"-->
-<!--                           minlength="6" required>-->
-<!--                </div>-->
-
-                @if($error)
-                    <b-notification aria-close-label="Close notification" type="is-danger" :closable="false">
-                        @lang('laraguard::validation.totp_code')
-                    </b-notification>
-                @endif
 
                 <br>
 
