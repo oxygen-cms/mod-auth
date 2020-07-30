@@ -1,5 +1,7 @@
 @extends('oxygen/ui-theme::layout.main')
 
+@section('title', __('oxygen/mod-auth::ui.login.title'))
+
 @section('content')
     <div id="app">
         <div class="login-fullscreen login-theme-{{ Preferences::get('appearance.auth::theme', 'autumn') }}">

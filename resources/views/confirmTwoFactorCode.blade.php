@@ -1,5 +1,7 @@
 @extends('oxygen/ui-theme::layout.main')
 
+@section('title', __('oxygen/mod-auth::ui.login.title'))
+
 @section('content')
 
 <div id="app">
@@ -37,7 +39,7 @@
                 <br>
 
                 <b-field label="2FA Code" label-position="inside">
-                    <b-input name="{{ $input }}" id="{{ $input }}" type="number" placeholder="e.g.: 123456" minlength="6" required></b-input>
+                    <b-input name="{{ $input }}" id="{{ $input }}" type="number" placeholder="e.g.: 123456" minlength="6" required autofocus></b-input>
                 </b-field>
 
                 <br>

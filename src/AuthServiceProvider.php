@@ -25,6 +25,7 @@ class AuthServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	public function boot() {
+        $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'oxygen.auth');
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'oxygen/mod-auth');
         $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'oxygen/mod-auth');
 

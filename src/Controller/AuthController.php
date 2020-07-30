@@ -3,6 +3,7 @@
 namespace OxygenModule\Auth\Controller;
 
 use DarkGhostHunter\Laraguard\Http\Controllers\Confirms2FACode;
+use GuzzleHttp\Client;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Events\Dispatcher;
@@ -14,7 +15,9 @@ use Illuminate\Session\SessionManager;
 use Illuminate\Validation\Factory;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
+use Oxygen\Auth\Entity\AuthenticationLogEntry;
 use Oxygen\Auth\Entity\User;
+use Oxygen\Auth\Repository\AuthenticationLogEntryRepositoryInterface;
 use Oxygen\Auth\Repository\UserRepositoryInterface;
 use Oxygen\Core\Blueprint\BlueprintNotFoundException;
 use Oxygen\Core\Contracts\Routing\ResponseFactory;
@@ -30,6 +33,8 @@ class AuthController extends BasicCrudController {
 
     use Confirms2FACode;
     use ThrottlesLogins;
+
+    const AUTHENTICATION_LOG_PER_PAGE = 10;
 
     /**
      * Constructs the AuthController.
@@ -67,10 +72,11 @@ class AuthController extends BasicCrudController {
      *
      * @return View
      */
-    public function getLogin() {
-        return view('oxygen/mod-auth::login', [
-            'title' => __('oxygen/mod-auth::ui.login.title')
-        ]);
+    public function getLogin(Request $request) {
+        if($request->has('intended')) {
+            $request->session()->put('url.intended', $request->get('intended'));
+        }
+        return view('oxygen/mod-auth::login');
     }
 
     /**
@@ -94,7 +100,7 @@ class AuthController extends BasicCrudController {
      * @throws ValidationException
      */
     public function postLogin(Request $request, AuthManager $auth, Dispatcher $events, PreferencesManager $preferences) {
-        $remember = $request->input('remember') === '1' ? true : false;
+        $remember = $request->input('remember') === '1';
 
         try {
             if($this->hasTooManyLoginAttempts($request)) {
@@ -141,8 +147,7 @@ class AuthController extends BasicCrudController {
      * @throws PreferenceNotFoundException
      */
     protected function getPostLoginRedirectPath(Request $request, PreferencesManager $preferences) {
-        $path = $request->session()->pull('url.intended', $preferences->get('modules.auth::dashboard'));
-        return $path;
+        return $request->session()->pull('url.intended', $preferences->get('modules.auth::dashboard'));
     }
 
     /**
@@ -239,6 +244,43 @@ class AuthController extends BasicCrudController {
             'fields' => $this->crudFields,
             'title' => __('oxygen/mod-auth::ui.profile.title')
         ]);
+    }
+
+    /**
+     * Get entries from the login log.
+     *
+     * @param AuthenticationLogEntryRepositoryInterface $entries
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getAuthenticationLogEntries(AuthenticationLogEntryRepositoryInterface $entries) {
+        $paginator = $entries->findByUser(auth()->user(), self::AUTHENTICATION_LOG_PER_PAGE, null);
+
+        return response()->json([
+            'items' => array_map(function(AuthenticationLogEntry $e) { return $e->toArray(); }, $paginator->items()),
+            'totalItems' => $paginator->total(),
+            'itemsPerPage' => $paginator->perPage(),
+            'status' => Notification::SUCCESS
+        ]);
+    }
+
+    /**
+     * Returns filled in IP geolocation data from a geolocation service.
+     */
+    public function getIPGeolocation($ip) {
+        $client = new Client();
+        
+        try {
+            $res = $client->request('GET', config('oxygen.auth.ipGeolocationUrl'), [
+                'query' => ['apiKey' => config('oxygen.auth.ipGeolocationKey'), 'ip' => $ip]
+            ]);
+            return response($res->getBody());
+        } catch(\GuzzleHttp\Exception\ClientException $e) {
+            report($e);
+            return response()->json([
+                'content' => 'IP geolocation failed',
+                'status' => Notification::FAILED
+            ]);
+        }
     }
 
     /**

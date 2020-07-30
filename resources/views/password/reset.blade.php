@@ -1,5 +1,7 @@
 @extends('oxygen/ui-theme::layout.main')
 
+@section('title', __('oxygen/mod-auth::ui.reset.title'))
+
 @section('content')
 
     <div id="app">

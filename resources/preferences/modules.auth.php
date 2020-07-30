@@ -33,6 +33,18 @@ Preferences::register('modules.auth', function($schema) {
                     'options' => $routesByName,
                     'validationRules' => ['route_exists:name']
                 ]
+            ],
+            'Logging' => [
+                [
+                    'name' => 'notifyWhenNewDevice',
+                    'type' => 'toggle',
+                    'label' => 'Notify user when logging in from a new device'
+                ],
+                [
+                    'name' => 'loginLogExpiry',
+                    'type' => 'number',
+                    'label' => 'Number of days to keep authentication log entries'
+                ]
             ]
         ]
     ]);

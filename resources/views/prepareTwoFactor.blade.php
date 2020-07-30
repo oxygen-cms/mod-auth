@@ -1,5 +1,7 @@
 @extends('oxygen/ui-theme::layout.main')
 
+@section('title', __('oxygen/mod-auth::ui.prepareTwoFactorAuth.title'))
+
 @section('content')
 
 <div id="app">
@@ -18,10 +20,11 @@
                 </h1>
             </div>
 
-            <p>Two-factor authentication uses once-off codes from another device (e.g.: your phone) for additional security. To use two-factor authentication with Oxygen, you need to download an authenticator app onto your phone. Supported apps include Google Authenticator, LastPass Authenticator, Microsoft Authenticator, Authy etc... You can download Google Authenticator using the buttons below:</p>
-
-            <a target="_blank" href='https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en_AU&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png' style="width: 120px;"/></a>
-            <a target="_blank" href="https://apps.apple.com/us/app/google-authenticator/id388497605"><img src="https://developer.apple.com/app-store/marketing/guidelines/images/badge-download-on-the-app-store.svg" style="width: 120px;" /></a>
+            <p>Two-factor authentication uses once-off codes from another device (e.g.: your phone) for additional security. To use two-factor authentication with Oxygen CMS, you need to download an authenticator app onto your phone. Supported apps include
+                Google Authenticator,
+                <a href="https://lastpass.com/auth/" target="_blank">LastPass Authenticator</a>,
+                <a href="https://www.microsoft.com/en-us/account/authenticator" target="_blank">Microsoft Authenticator</a>,
+                <a href="https://authy.com/features/" target="_blank">Authy</a>...</p>
 
             <br>
             <h2 class="subtitle">Getting started</h2>
