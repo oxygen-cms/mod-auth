@@ -49,25 +49,6 @@ class AuthController extends BasicCrudController {
     }
 
     /**
-     * If logged in, redirect to the dashboard.
-     * If not, show the login page.
-     *
-     * @param AuthManager $auth
-     * @param UrlGenerator $url
-     * @param ResponseFactory $response
-     * @param PreferencesManager $preferences
-     * @return RedirectResponse
-     * @throws PreferenceNotFoundException
-     */
-    public function getCheck(AuthManager $auth, UrlGenerator $url, ResponseFactory $response, PreferencesManager $preferences) {
-        if($auth->guard()->check()) {
-            return $response->redirectToIntended($url->route($preferences->get('modules.auth::dashboard')));
-        } else {
-            return $response->redirectGuest($url->route('auth.getLogin'));
-        }
-    }
-
-    /**
      * Show the login form.
      *
      * @return View

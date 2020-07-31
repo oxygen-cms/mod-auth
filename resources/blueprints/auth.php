@@ -22,13 +22,6 @@ Blueprint::make('Auth', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
     $factory = new ActionFactory();
 
     $blueprint->makeAction([
-        'name' => 'getCheck',
-        'pattern' => '/',
-        'group' => new Group('auth', app(CoreConfiguration::class)->getAdminURIPrefix()),
-        'middleware' => ['web']
-    ], $factory);
-
-    $blueprint->makeAction([
         'name' => 'getPrepareTwoFactor',
         'pattern' => 'prepareTwoFactor',
         'middleware' => ['web', 'oxygen.auth', '2fa.disabled']

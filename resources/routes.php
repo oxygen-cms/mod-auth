@@ -1,6 +1,6 @@
 <?php
 
-Route::get('2fa-required', '\OxygenModule\Auth\Controller\AuthController@getTwoFactorAuthNotice')->name('2fa.notice');
+Route::get('/oxygen/auth/2fa-required', '\OxygenModule\Auth\Controller\AuthController@getTwoFactorAuthNotice')->name('2fa.notice');
 
 Route::post('/oxygen/api/auth/login-log-entries', '\OxygenModule\Auth\Controller\AuthController@getAuthenticationLogEntries')
     ->name('auth.getAuthenticationLogEntries')

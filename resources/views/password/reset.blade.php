@@ -50,6 +50,6 @@
         </div>
     </div>
 
-    <script src="/vendor/oxygen/ui-theme/js/spaLogin.js"></script>
+    <script src="/oxygen/spa-login.js"></script>
 
 @stop

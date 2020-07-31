@@ -15,11 +15,11 @@
     ],
     "require": {
         "php": ">=7.2.0",
-        "oxygen/auth": "~0.5.0",
-        "oxygen/core": "~0.7.0",
-        "oxygen/crud": "~0.6.1",
-        "oxygen/data": "~0.9.4",
-        "oxygen/preferences": "~0.3",
+        "oxygen/auth": "~0.5.2",
+        "oxygen/core": "~0.8.0",
+        "oxygen/crud": "~0.7.0",
+        "oxygen/data": "~0.9.5",
+        "oxygen/preferences": "~0.3.5",
         "illuminate/support": "~6.0",
         "darkghosthunter/laraguard": "dev-master"
     },
@@ -28,7 +28,7 @@
             "OxygenModule\\Auth\\": "src/"
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "extra": {
         "title": "Oxygen Module - Auth",
         "readme": "oxygen.md",
