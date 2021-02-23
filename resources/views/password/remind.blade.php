@@ -1,4 +1,4 @@
-@extends('oxygen/ui-theme::layout.main')
+@extends('admin.layout')
 
 @section('title', __('oxygen/mod-auth::ui.remind.title'))
 
@@ -43,6 +43,6 @@
         </div>
     </div>
 
-    <script src="/oxygen/spa-login.js"></script>
+    <script src="/oxygen/dist/js/spaLogin.js"></script>
 
 @stop

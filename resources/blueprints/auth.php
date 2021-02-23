@@ -14,7 +14,7 @@ Blueprint::make('Auth', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
     $blueprint->setDisplayName('Profile');
     $blueprint->setPluralDisplayName('Auth');
     $blueprint->setIcon('lock');
-    
+
     $blueprint->setToolbarOrders([
         'section' => ['getUpdate', 'getChangePassword', 'getPreferences']
     ]);
@@ -41,25 +41,6 @@ Blueprint::make('Auth', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
     ], $factory);
 
     $blueprint->makeAction([
-        'name' => 'postLogin',
-        'pattern' => 'login',
-        'method'  => 'POST',
-        'middleware' => ['web', 'oxygen.guest']
-    ], $factory);
-
-    $blueprint->makeAction([
-        'name' => 'postLogout',
-        'pattern' => 'logout',
-        'method' => 'POST',
-        'middleware' => ['web', 'oxygen.auth']
-    ], $factory);
-    $blueprint->makeToolbarItem([
-        'action' => 'postLogout',
-        'label' => 'Logout',
-        'icon'  => 'power-off'
-    ]);
-
-    $blueprint->makeAction([
         'name' => 'getLogoutSuccess',
         'pattern' => 'logout',
         'middleware' => ['web', 'oxygen.guest']
@@ -67,7 +48,7 @@ Blueprint::make('Auth', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
 
     $blueprint->makeAction([
         'name' => 'getInfo',
-        'pattern' => 'profile'
+        'pattern' => 'profile.old'
     ]);
     $blueprint->makeToolbarItem([
         'action' => 'getInfo',
@@ -99,22 +80,6 @@ Blueprint::make('Auth', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
         'action' => 'getPreferences',
         'label' => 'Preferences',
         'icon'  => 'cog'
-    ]);
-
-    $blueprint->makeAction([
-        'name' => 'getChangePassword',
-        'pattern' => 'changePassword'
-    ]);
-    $blueprint->makeToolbarItem([
-        'action' => 'getChangePassword',
-        'label' => 'Change Password',
-        'icon'  => 'lock'
-    ]);
-
-    $blueprint->makeAction([
-        'name' => 'postChangePassword',
-        'pattern' => 'changePassword',
-        'method' => 'POST'
     ]);
 
     $blueprint->makeAction([

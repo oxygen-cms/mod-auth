@@ -32,7 +32,7 @@ Blueprint::make('Password', function(Oxygen\Core\Blueprint\Blueprint $blueprint)
 
     $blueprint->makeAction([
         'name' => 'postReset',
-        'pattern' => 'logout',
+        'pattern' => 'reset',
         'method' => 'POST',
         'middleware' => ['web', 'oxygen.guest']
     ], $factory);

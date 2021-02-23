@@ -1,4 +1,4 @@
-@extends('oxygen/ui-theme::layout.main')
+@extends('admin.layout')
 
 @section('title', __('oxygen/mod-auth::ui.logout.title'))
 
@@ -26,33 +26,6 @@
         </div>
     </div>
 
-    <script src="/oxygen/spa-login.js"></script>
+    <script src="/oxygen/dist/js/spaLogin.js"></script>
 
-<!--<div class="Login-background Login-background--sharp"></div>-->
-<!---->
-<!-- =====================-->
-<!--            Logout-->
-<!--     ===================== -->
-<!---->
-<!--<div class="CenteringContainer">-->
-<!--    <div class="Block Block--mini">-->
-<!--        <div class="Header Header--normal Header--condensedWidthCenter">-->
-<!--            <h2 class="Header-title heading-beta">-->
-<!--                -->
-<!--            </h2>-->
-<!--        </div>-->
-<!---->
-<!--        <div class="Row Row--flexSpaceBetween">-->
-<!--            <a href="{{{ URL::route($blueprint->getRouteName('getLogin')) }}}" class="Button Button-color--blue">-->
-<!--                @lang('oxygen/mod-auth::ui.logout.loginAgain')-->
-<!--            </a>-->
-<!--            <a href="{{{ URL::route(Preferences::get('modules.auth::home')) }}}" class="Button Button-color--grey">-->
-<!--                @lang('oxygen/mod-auth::ui.logout.toHome')-->
-<!--            </a>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-
-
-    @stop
+@stop

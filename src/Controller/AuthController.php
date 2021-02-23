@@ -5,6 +5,7 @@ namespace OxygenModule\Auth\Controller;
 use DarkGhostHunter\Laraguard\Http\Controllers\Confirms2FACode;
 use GuzzleHttp\Client;
 use Illuminate\Auth\AuthManager;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -51,6 +52,7 @@ class AuthController extends BasicCrudController {
     /**
      * Show the login form.
      *
+     * @param Request $request
      * @return View
      */
     public function getLogin(Request $request) {
@@ -88,7 +90,7 @@ class AuthController extends BasicCrudController {
                 $this->fireLockoutEvent($request);
                 $this->sendLockoutResponse($request);
             }
-            
+
             if ($auth->guard()->attempt([
                 'username' => $request->input('username'),
                 'password' => $request->input('password')
@@ -105,7 +107,7 @@ class AuthController extends BasicCrudController {
                 );
             } else {
                 $this->incrementLoginAttempts($request);
-                
+
                 $events->dispatch('auth.login.failed', [$request->input('username')]);
 
                 return notify(
@@ -132,7 +134,7 @@ class AuthController extends BasicCrudController {
     }
 
     /**
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|View
+     * @return Application|\Illuminate\Contracts\View\Factory|View
      */
     public function getTwoFactorAuthNotice() {
         return redirect(route('auth.getPrepareTwoFactor'));
@@ -140,9 +142,9 @@ class AuthController extends BasicCrudController {
 
     /**
      * Begins to set-up two-factor authentication for this user.
-     * 
+     *
      * @param Request $request
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|View
+     * @return Application|\Illuminate\Contracts\View\Factory|View
      */
     public function getPrepareTwoFactor(Request $request) {
         $secret = $request->user()->createTwoFactorAuth();
@@ -157,7 +159,7 @@ class AuthController extends BasicCrudController {
     public function postConfirmTwoFactor(Request $request, PreferencesManager $preferences) {
         $code = str_replace(' ', '', $request->input('2fa_code'));
         $activated = $request->user()->confirmTwoFactorAuth($code);
-        
+
         if(!$activated) {
             return notify(
                 new Notification(
@@ -177,7 +179,7 @@ class AuthController extends BasicCrudController {
 
     /**
      * Log the user out.
-     * 
+     *
      * @param AuthManager $auth
      * @param Dispatcher $events
      * @return mixed
@@ -228,6 +230,20 @@ class AuthController extends BasicCrudController {
     }
 
     /**
+     * Show the current user's profile.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserDetailsApi() {
+        $user = auth()->user();
+
+        return response()->json([
+            'user' => $user->toArray(),
+            'status' => Notification::SUCCESS
+        ]);
+    }
+
+    /**
      * Get entries from the login log.
      *
      * @param AuthenticationLogEntryRepositoryInterface $entries
@@ -246,10 +262,12 @@ class AuthController extends BasicCrudController {
 
     /**
      * Returns filled in IP geolocation data from a geolocation service.
+     * @param string $ip
+     * @return Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|Response
      */
     public function getIPGeolocation($ip) {
         $client = new Client();
-        
+
         try {
             $res = $client->request('GET', config('oxygen.auth.ipGeolocationUrl'), [
                 'query' => ['apiKey' => config('oxygen.auth.ipGeolocationKey'), 'ip' => $ip]
@@ -323,7 +341,7 @@ class AuthController extends BasicCrudController {
      * @param AuthManager $auth
      * @param Request $request
      * @param Factory $validationFactory
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      * @throws \Oxygen\Data\Exception\InvalidEntityException
      */
     public function postChangePassword(AuthManager $auth, Request $request, Factory $validationFactory) {
@@ -343,30 +361,32 @@ class AuthController extends BasicCrudController {
             $user->setPassword($input['password']);
             $this->repository->persist($user);
 
-            return notify(
-                new Notification(__('oxygen/mod-auth::messages.password.changed')),
-                ['redirect' => $this->blueprint->getRouteName('getInfo')]
-            );
+            return response()->json([
+                'content' => __('oxygen/mod-auth::messages.password.changed'),
+                'status' => Notification::SUCCESS
+            ]);
         } else {
-            return notify(
-                new Notification($validator->messages()->first(), Notification::FAILED)
-            );
+            return response()->json([
+                'content' => $validator->messages()->first(),
+                'status' => Notification::FAILED
+            ]);
         }
     }
 
     /**
      * Deletes the user permanently.
      *
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function deleteForce(AuthManager $auth) {
         $user = $auth->guard()->user();
+        dd('deleting');
         $this->repository->delete($user);
 
-        return notify(
-            new Notification(__('oxygen/mod-auth::messages.account.terminated')),
-            ['redirect' => $this->blueprint->getRouteName('getLogin'), 'hardRedirect' => true]
-        );
+        return response()->json([
+            'content' => __('oxygen/mod-auth::messages.account.terminated'),
+            'status' => Notification::SUCCESS
+        ]);
     }
 
 }

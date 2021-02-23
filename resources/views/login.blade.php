@@ -1,4 +1,4 @@
-@extends('oxygen/ui-theme::layout.main')
+@extends('admin.layout')
 
 @section('title', __('oxygen/mod-auth::ui.login.title'))
 
@@ -13,10 +13,10 @@
                         @lang('oxygen/mod-auth::ui.login.welcomeSubtitle')
                     </h1>
                 </div>
-                
+
                 <br>
 
-                <form action="{{ URL::route($blueprint->getAction('postLogin')->getName()) }}" method="post">
+                <form action="/oxygen/api/auth/login" method="post">
 
                     @csrf
 
@@ -27,7 +27,7 @@
                     <b-field label="Password" label-position="inside">
                         <b-input type="password" name="password"></b-input>
                     </b-field>
-                    
+
                     <br>
 
                     <div class="login-justify-content">
@@ -43,5 +43,6 @@
         </div>
     </div>
 
-    <script src="/oxygen/spa-login.js"></script>
+    <script src="/oxygen/dist/js/spaLogin.js"></script>
+
 @stop

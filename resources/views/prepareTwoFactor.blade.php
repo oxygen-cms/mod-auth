@@ -1,4 +1,4 @@
-@extends('oxygen/ui-theme::layout.main')
+@extends('admin.layout')
 
 @section('title', __('oxygen/mod-auth::ui.prepareTwoFactorAuth.title'))
 
@@ -31,16 +31,16 @@
             <p>Scan the QR code below on your phone to begin setting up two-factor authentication, or follow <a href="{{ $as_uri }}">this link</a>.</p>
 
             {!! $as_qr_code !!}
-            
+
             <p></p>
             <p>Or, manually enter this secret key into your chosen authenticator app:<br><br>
             <pre>{{ $as_string }}</pre></p>
 
             <br>
             <h2 class="subtitle">Confirm setup</h2>
-            <p>Once you've successfully configured your authenticator app, enter the code below to continue.</p>
+            <p>Once you've successfully conf(igured your authenticator app, enter the code below to continue.</p>
             <br>
-            
+
             <form action="{{ URL::route($blueprint->getAction('postConfirmTwoFactor')->getName()) }}" method="post">
 
                 @csrf
@@ -63,6 +63,6 @@
     </div>
 </div>
 
-<script src="/oxygen/spa-login.js"></script>
+<script src="/oxygen/dist/js/spaLogin.js"></script>
 
 @stop

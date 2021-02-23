@@ -5,10 +5,8 @@ namespace OxygenModule\Auth;
 use Illuminate\Support\ServiceProvider;
 use Oxygen\Core\Blueprint\BlueprintManager;
 use Oxygen\Core\Database\AutomaticMigrator;
-use Oxygen\Core\Html\Navigation\Navigation;
 use Oxygen\Preferences\PreferencesManager;
 use Oxygen\Preferences\Transformer\JavascriptTransformer;
-use OxygenModule\Auth\Controller\AuthController;
 
 class AuthServiceProvider extends ServiceProvider {
 
@@ -40,24 +38,7 @@ class AuthServiceProvider extends ServiceProvider {
         $this->app[PreferencesManager::class]->loadDirectory(__DIR__ . '/../resources/preferences');
         $this->app[AutomaticMigrator::class]->loadMigrationsFrom(__DIR__ . '/../migrations', 'oxygen/mod-auth');
 
-        $this->addNavigationItems();
         $this->addPreferencesToLayout();
-	}
-
-	/**
-	 * Adds items the the admin navigation.
-	 *
-	 * @return void
-	 */
-
-	public function addNavigationItems() {
-		$blueprints = $this->app[BlueprintManager::class];
-		$blueprint = $blueprints->get('Auth');
-		$nav = $this->app[Navigation::class];
-
-		$nav->add($blueprint->getToolbarItem('getInfo'));
-		$nav->add($blueprint->getToolbarItem('getPreferences'));
-		$nav->add($blueprint->getToolbarItem('postLogout'));
 	}
 
 	/**
