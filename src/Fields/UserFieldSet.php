@@ -4,6 +4,7 @@
 namespace OxygenModule\Auth\Fields;
 
 use Carbon\Carbon;
+use Oxygen\Core\Form\FieldMetadata;
 use Oxygen\Core\Form\FieldSet;
 use Oxygen\Core\Form\Type\CustomType;
 
@@ -15,6 +16,22 @@ class UserFieldSet extends FieldSet {
      * @return array
      */
     public function createFields() {
+        FieldMetadata::addType('userDisplayName', new CustomType(
+            function($metadata, $value) {
+                return $value;
+            },
+            function($metadata, $value) {
+                return $value->getName();
+            }
+        ));
+        FieldMetadata::addType('dateDiff', new CustomType(
+            function($metadata, $value) {
+                return $value;
+            },
+            function($metadata, $value) {
+                return Carbon::instance($value)->diffForHumans();
+            }
+        ));
         return $this->makeFields([
             [
                 'name'      => 'username',
@@ -36,27 +53,12 @@ class UserFieldSet extends FieldSet {
             [
                 'name'      => 'group',
                 'label'     => 'Group',
-                'typeInstance' => new CustomType(
-                    function($metadata, $value) {
-                        return $value;
-                    },
-                    function($metadata, $value) {
-                        return $value->getName();
-                    }
-                )
+                'type'      => 'userDisplayName'
             ],
             [
                 'name'      => 'createdAt',
                 'label'     => 'Joined',
-                'type'      => 'datetime',
-                'typeInstance' => new CustomType(
-                    function($metadata, $value) {
-                        return $value;
-                    },
-                    function($metadata, $value) {
-                        return Carbon::instance($value)->diffForHumans();
-                    }
-                )
+                'type'      => 'dateDiff'
             ]
         ]);
     }
