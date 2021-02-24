@@ -26,6 +26,4 @@
         </div>
     </div>
 
-    <script src="/oxygen/dist/js/spaLogin.js"></script>
-
 @stop
