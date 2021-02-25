@@ -47,42 +47,6 @@ Blueprint::make('Auth', function(Oxygen\Core\Blueprint\Blueprint $blueprint) {
     ], $factory);
 
     $blueprint->makeAction([
-        'name' => 'getInfo',
-        'pattern' => 'profile.old'
-    ]);
-    $blueprint->makeToolbarItem([
-        'action' => 'getInfo',
-        'label' => 'Profile',
-        'icon'  => 'search'
-    ]);
-
-    $blueprint->makeAction([
-        'name' => 'getUpdate',
-        'pattern' => 'update'
-    ]);
-    $blueprint->makeToolbarItem([
-        'action' => 'getUpdate',
-        'label' => 'Edit Profile',
-        'icon'  => 'pencil'
-    ]);
-
-    $blueprint->makeAction([
-        'name' => 'putUpdate',
-        'pattern' => 'profile',
-        'method' => 'PUT'
-    ]);
-
-    $blueprint->makeAction([
-        'name' => 'getPreferences',
-        'pattern' => 'preferences'
-    ]);
-    $blueprint->makeToolbarItem([
-        'action' => 'getPreferences',
-        'label' => 'Preferences',
-        'icon'  => 'cog'
-    ]);
-
-    $blueprint->makeAction([
         'name' => 'deleteForce',
         'pattern' => 'terminateAccount',
         'method' => 'DELETE'

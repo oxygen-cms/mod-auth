@@ -68,6 +68,7 @@ class AuthController extends BasicCrudController {
      * @return string
      */
     protected function username() {
+        // TODO: get the current username
         return 'username';
     }
 
@@ -216,22 +217,6 @@ class AuthController extends BasicCrudController {
     /**
      * Show the current user's profile.
      *
-     * @param null $user
-     * @return View
-     */
-    public function getInfo($user = null) {
-        $user = auth()->user();
-
-        return view('oxygen/mod-auth::profile', [
-            'user' => $user,
-            'fields' => $this->crudFields,
-            'title' => __('oxygen/mod-auth::ui.profile.title')
-        ]);
-    }
-
-    /**
-     * Show the current user's profile.
-     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getUserDetailsApi() {
@@ -283,59 +268,6 @@ class AuthController extends BasicCrudController {
     }
 
     /**
-     * Shows the update form.
-     *
-     * @param null $user
-     * @return View
-     */
-    public function getUpdate($user = null) {
-        $user = auth()->user();
-
-        return view('oxygen/mod-auth::update', [
-            'user' => $user,
-            'fields' => $this->crudFields,
-            'title' => __('oxygen/mod-auth::ui.update.title')
-        ]);
-    }
-
-    /**
-     * Updates a the user.
-     *
-     * @param Request $request
-     * @param null $user
-     * @return Response
-     * @throws \Exception
-     */
-    public function putUpdate(Request $request, $user = null) {
-        $user = auth()->user();
-
-        return parent::putUpdate($request, $user);
-    }
-
-    /**
-     * Redirects the user to the preferences.
-     *
-     * @return RedirectResponse
-     */
-    public function getPreferences(ResponseFactory $response) {
-        return $response->redirectToRoute('preferences.getView', ['user']);
-    }
-
-    /**
-     * Change password form.
-     *
-     * @return View
-     */
-    public function getChangePassword(AuthManager $auth) {
-        $user = $auth->guard()->user();
-
-        return view('oxygen/mod-auth::changePassword', [
-            'user' => $user,
-            'title' => __('oxygen/mod-auth::ui.changePassword.title')
-        ]);
-    }
-
-    /**
      * Change the user's password.
      *
      * @param AuthManager $auth
@@ -380,7 +312,6 @@ class AuthController extends BasicCrudController {
      */
     public function deleteForce(AuthManager $auth) {
         $user = $auth->guard()->user();
-        dd('deleting');
         $this->repository->delete($user);
 
         return response()->json([
