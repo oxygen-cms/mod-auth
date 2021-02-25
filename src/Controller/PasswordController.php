@@ -22,6 +22,10 @@ class PasswordController extends BlueprintController {
      * @var UserRepositoryInterface
      */
     private $users;
+    /**
+     * @var BlueprintManager
+     */
+    private $blueprintManager;
 
     /**
      * Constructs the controller.
@@ -33,6 +37,7 @@ class PasswordController extends BlueprintController {
      */
     public function __construct(UserRepositoryInterface $users, BlueprintManager $manager) {
         parent::__construct($manager->get('Password'));
+        $this->blueprintManager = $manager;
         $this->users = $users;
     }
 
@@ -124,7 +129,7 @@ class PasswordController extends BlueprintController {
             case PasswordBroker::PASSWORD_RESET:
                 return notify(
                     new Notification(__($response), Notification::SUCCESS),
-                    ['redirect' => Blueprint::get('Auth')->getRouteName('getLogin'), 'hardRedirect' => true]
+                    ['redirect' => $this->blueprintManager->get('Auth')->getRouteName('getLogin'), 'hardRedirect' => true]
                 );
             default:
                 return notify(
