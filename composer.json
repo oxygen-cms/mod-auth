@@ -15,11 +15,11 @@
     ],
     "require": {
         "php": ">=7.2.0",
-        "oxygen/auth": "~0.5.4",
-        "oxygen/core": "~0.9.1",
+        "oxygen/auth": "~0.5.5",
+        "oxygen/core": "~0.10.0",
         "oxygen/crud": "~0.7.1",
-        "oxygen/data": "~0.9.8",
-        "oxygen/preferences": "~0.3.6",
+        "oxygen/data": "~0.10.0",
+        "oxygen/preferences": "~0.3.7",
         "illuminate/support": "~6.0",
         "darkghosthunter/laraguard": "dev-master",
         "guzzlehttp/guzzle": "~6.5.5"

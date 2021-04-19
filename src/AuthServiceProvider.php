@@ -4,7 +4,6 @@ namespace OxygenModule\Auth;
 
 use Illuminate\Support\ServiceProvider;
 use Oxygen\Core\Blueprint\BlueprintManager;
-use Oxygen\Core\Database\AutomaticMigrator;
 use Oxygen\Preferences\PreferencesManager;
 use Oxygen\Preferences\Transformer\JavascriptTransformer;
 
@@ -36,7 +35,7 @@ class AuthServiceProvider extends ServiceProvider {
 
         $this->app[BlueprintManager::class]->loadDirectory(__DIR__ . '/../resources/blueprints');
         $this->app[PreferencesManager::class]->loadDirectory(__DIR__ . '/../resources/preferences');
-        $this->app[AutomaticMigrator::class]->loadMigrationsFrom(__DIR__ . '/../migrations', 'oxygen/mod-auth');
+        $this->loadMigrationsFrom(__DIR__ . '/../migrations');
 
         $this->addPreferencesToLayout();
 	}
