@@ -1,6 +1,6 @@
 <?php
 
-    use Oxygen\Preferences\Loader\Database\PreferenceRepositoryInterface;
+    use Oxygen\Preferences\Loader\PreferenceRepositoryInterface;
     use Oxygen\Preferences\Loader\DatabaseLoader;
 
 Preferences::register('modules.auth', function($schema) {
@@ -9,7 +9,7 @@ Preferences::register('modules.auth', function($schema) {
 
     $routesByName = function() {
         $options = [];
-        foreach(Route::getRoutes()->getRoutes() as $route) {
+        foreach(app(\Illuminate\Routing\Router::class)->getRoutes() as $route) {
             $name = $route->getName();
             if($name !== null) {
                 $options[$name] = $name;
@@ -19,33 +19,27 @@ Preferences::register('modules.auth', function($schema) {
     };
 
     $schema->makeFields([
-        '' => [
-            '' => [
-                [
-                    'name' => 'dashboard',
-                    'type' => 'select',
-                    'options' => $routesByName,
-                    'validationRules' => ['route_exists:name']
-                ],
-                [
-                    'name' => 'home',
-                    'type' => 'select',
-                    'options' => $routesByName,
-                    'validationRules' => ['route_exists:name']
-                ]
-            ],
-            'Logging' => [
-                [
-                    'name' => 'notifyWhenNewDevice',
-                    'type' => 'toggle',
-                    'label' => 'Notify user when logging in from a new device'
-                ],
-                [
-                    'name' => 'loginLogExpiry',
-                    'type' => 'number',
-                    'label' => 'Number of days to keep authentication log entries'
-                ]
-            ]
+        [
+            'name' => 'dashboard',
+            'type' => 'select',
+            'options' => $routesByName,
+            'validationRules' => ['route_exists:name']
+        ],
+        [
+            'name' => 'home',
+            'type' => 'select',
+            'options' => $routesByName,
+            'validationRules' => ['route_exists:name']
+        ],
+        [
+            'name' => 'notifyWhenNewDevice',
+            'type' => 'toggle',
+            'label' => 'Notify user when logging in from a new device'
+        ],
+        [
+            'name' => 'loginLogExpiry',
+            'type' => 'number',
+            'label' => 'Number of days to keep authentication log entries'
         ]
     ]);
 });

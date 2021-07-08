@@ -33,6 +33,12 @@ Route::get('/oxygen/api/auth/user', '\OxygenModule\Auth\Controller\AuthControlle
         'web', 'oxygen.auth', '2fa.require', 'oxygen.permissions:auth.getInfo'
     ]);
 
+Route::put('/oxygen/api/auth/fullName', '\OxygenModule\Auth\Controller\AuthController@putUpdateFullName')
+    ->name('auth.putUpdateFullName')
+    ->middleware([
+        'web', 'oxygen.auth', '2fa.require', 'oxygen.permissions:auth.putUpdate'
+    ]);
+
 Route::post('/oxygen/api/auth/change-password', '\OxygenModule\Auth\Controller\AuthController@postChangePassword')
     ->name('auth.postChangePassword')
     ->middleware([

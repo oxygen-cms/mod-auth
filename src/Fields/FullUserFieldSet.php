@@ -39,7 +39,7 @@ class FullUserFieldSet extends FieldSet {
             [
                 'name'      => 'preferences',
                 'label'     => 'Preferences',
-                'type'      => 'editor-mini',
+                'type'      => 'editor-mini-json',
                 'editable'  => true,
                 'options' => [
                     'language' => 'json',

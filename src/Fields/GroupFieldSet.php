@@ -3,6 +3,7 @@
 
 namespace OxygenModule\Auth\Fields;
 
+use Oxygen\Auth\Repository\GroupRepositoryInterface;
 use Oxygen\Core\Form\FieldSet;
 
 class GroupFieldSet extends FieldSet {
@@ -32,7 +33,7 @@ class GroupFieldSet extends FieldSet {
             ],
             [
                 'name'      => 'preferences',
-                'type'      => 'editor-mini',
+                'type'      => 'editor-mini-json',
                 'editable'  => true,
                 'options' => [
                     'language'  => 'json',
@@ -44,7 +45,7 @@ class GroupFieldSet extends FieldSet {
             ],
             [
                 'name'      => 'permissions',
-                'type'      => 'editor-mini',
+                'type'      => 'editor-mini-json',
                 'editable'  => true,
                 'options' => [
                     'language'  => 'json',
@@ -53,6 +54,22 @@ class GroupFieldSet extends FieldSet {
                 'attributes' => [
                     'rows' => 20
                 ]
+            ],
+            [
+                'name'      => 'parent',
+                'label'     => 'Parent',
+                'editable'  => true,
+                'type'      => 'relationship',
+                'options'   => [
+                    'type'       => 'manyToOne',
+                    'blueprint'  => 'Group',
+                    'allowNull' => true,
+                    'repository' => function() {
+                        return app(GroupRepositoryInterface::class);
+                    },
+                    'nameField' => 'name'
+                ],
+
             ],
             [
                 'name'      => 'createdAt',

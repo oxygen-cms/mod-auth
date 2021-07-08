@@ -4,11 +4,12 @@ namespace OxygenModule\Auth\Controller;
 
 use DarkGhostHunter\Laraguard\Http\Controllers\Confirms2FACode;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -21,7 +22,7 @@ use Oxygen\Auth\Entity\User;
 use Oxygen\Auth\Repository\AuthenticationLogEntryRepositoryInterface;
 use Oxygen\Auth\Repository\UserRepositoryInterface;
 use Oxygen\Core\Blueprint\BlueprintNotFoundException;
-use Oxygen\Core\Contracts\Routing\ResponseFactory;
+use Oxygen\Data\Exception\InvalidEntityException;
 use Oxygen\Preferences\PreferenceNotFoundException;
 use Oxygen\Preferences\PreferencesManager;
 use OxygenModule\Auth\Fields\UserFieldSet;
@@ -63,12 +64,12 @@ class AuthController extends BasicCrudController {
     }
 
     /**
-     * Required for throttling login attempts.
+     * Returns the request parameter used for throttling login attempts.
+     * In this case, we throttled based upon username.
      *
      * @return string
      */
     protected function username() {
-        // TODO: get the current username
         return 'username';
     }
 
@@ -135,7 +136,7 @@ class AuthController extends BasicCrudController {
     }
 
     /**
-     * @return Application|\Illuminate\Contracts\View\Factory|View
+     * @return RedirectResponse
      */
     public function getTwoFactorAuthNotice() {
         return redirect(route('auth.getPrepareTwoFactor'));
@@ -217,7 +218,7 @@ class AuthController extends BasicCrudController {
     /**
      * Show the current user's profile.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getUserDetailsApi() {
         $user = auth()->user();
@@ -232,10 +233,10 @@ class AuthController extends BasicCrudController {
      * Get entries from the login log.
      *
      * @param AuthenticationLogEntryRepositoryInterface $entries
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getAuthenticationLogEntries(AuthenticationLogEntryRepositoryInterface $entries) {
-        $paginator = $entries->findByUser(auth()->user(), self::AUTHENTICATION_LOG_PER_PAGE, null);
+        $paginator = $entries->findByUser(auth()->user(), self::AUTHENTICATION_LOG_PER_PAGE);
 
         return response()->json([
             'items' => array_map(function(AuthenticationLogEntry $e) { return $e->toArray(); }, $paginator->items()),
@@ -248,7 +249,7 @@ class AuthController extends BasicCrudController {
     /**
      * Returns filled in IP geolocation data from a geolocation service.
      * @param string $ip
-     * @return Application|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\JsonResponse|Response
+     * @return Application|\Illuminate\Contracts\Routing\ResponseFactory|JsonResponse|Response
      */
     public function getIPGeolocation($ip) {
         $client = new Client();
@@ -258,7 +259,7 @@ class AuthController extends BasicCrudController {
                 'query' => ['apiKey' => config('oxygen.auth.ipGeolocationKey'), 'ip' => $ip]
             ]);
             return response($res->getBody());
-        } catch(\GuzzleHttp\Exception\ClientException $e) {
+        } catch(ClientException $e) {
             report($e);
             return response()->json([
                 'content' => 'IP geolocation failed',
@@ -273,8 +274,8 @@ class AuthController extends BasicCrudController {
      * @param AuthManager $auth
      * @param Request $request
      * @param Factory $validationFactory
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \Oxygen\Data\Exception\InvalidEntityException
+     * @return JsonResponse
+     * @throws InvalidEntityException
      */
     public function postChangePassword(AuthManager $auth, Request $request, Factory $validationFactory) {
         $user = $auth->guard()->user();
@@ -306,9 +307,29 @@ class AuthController extends BasicCrudController {
     }
 
     /**
+     * Change the user's password.
+     *
+     * @param AuthManager $auth
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InvalidEntityException
+     */
+    public function putUpdateFullName(AuthManager $auth, Request $request) {
+        $user = $auth->guard()->user();
+        $user->setFullName($request->get('fullName'));
+        $this->repository->persist($user);
+
+        return response()->json([
+            'content' => __('oxygen/mod-auth::messages.fullNameChanged'),
+            'status' => Notification::SUCCESS,
+            'item' => $user->toArray()
+        ]);
+    }
+
+    /**
      * Deletes the user permanently.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function deleteForce(AuthManager $auth) {
         $user = $auth->guard()->user();

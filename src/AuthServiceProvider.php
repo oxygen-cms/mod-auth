@@ -36,24 +36,7 @@ class AuthServiceProvider extends ServiceProvider {
         $this->app[BlueprintManager::class]->loadDirectory(__DIR__ . '/../resources/blueprints');
         $this->app[PreferencesManager::class]->loadDirectory(__DIR__ . '/../resources/preferences');
         $this->loadMigrationsFrom(__DIR__ . '/../migrations');
-
-        $this->addPreferencesToLayout();
 	}
-
-	/**
-     * Adds some embedded Javascript code that contains the user's preferences.
-     *
-     * @return void
-     */
-
-    protected function addPreferencesToLayout() {
-        $this->app['events']->listen('oxygen.layout.body.after', function() {
-		    if($this->app['auth']->check()) {
-		        $javascriptTransformer = new JavascriptTransformer();
-		        echo $javascriptTransformer->fromRepository($this->app['auth']->user()->getPreferences(), false, 'window.Oxygen.user');
-		    }
-        });
-    }
 
 	/**
 	 * Register the service provider.

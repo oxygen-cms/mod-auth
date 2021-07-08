@@ -22,7 +22,8 @@
         "oxygen/preferences": "~0.3.7",
         "illuminate/support": "~6.0",
         "darkghosthunter/laraguard": "dev-master",
-        "guzzlehttp/guzzle": "~6.5.5"
+        "guzzlehttp/guzzle": "~6.5.5",
+        "lab404/laravel-impersonate": "dev-master"
     },
     "autoload": {
         "psr-4": {

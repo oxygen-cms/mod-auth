@@ -1,6 +1,7 @@
 <?php
 
-use Oxygen\Preferences\Loader\Database\PreferenceRepositoryInterface;
+use Illuminate\Validation\Rule;
+use Oxygen\Preferences\Loader\PreferenceRepositoryInterface;
 use Oxygen\Preferences\Loader\DatabaseLoader;
 
 Preferences::register('appearance.auth', function($schema) {
@@ -18,22 +19,12 @@ Preferences::register('appearance.auth', function($schema) {
         'yosemite' => 'Yosemite'
     ];
 
-    $schema->makeFields([
-        '' => [
-            '' => [
-                [
-                    'name' => 'theme',
-                    'type' => 'select',
-                    'options' => $themes,
-                    'validationRules' => [
-                        'in:' . implode(',', array_keys($themes))
-                    ]
-                ],
-                [
-                    'name' => 'logo',
-                    'type' => 'text'
-                ]
-            ]
+    $schema->makeField([
+        'name' => 'theme',
+        'type' => 'select',
+        'options' => $themes,
+        'validationRules' => [
+            Rule::in(array_keys($themes))
         ]
     ]);
 });

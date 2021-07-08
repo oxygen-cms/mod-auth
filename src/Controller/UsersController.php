@@ -2,7 +2,9 @@
 
 namespace OxygenModule\Auth\Controller;
 
+use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Http\Request;
+use Lab404\Impersonate\Services\ImpersonateManager;
 use Oxygen\Core\Form\FieldMetadata;
 use Oxygen\Core\Html\Form\EditableField;
 use Oxygen\Core\Html\Form\Label;
@@ -73,7 +75,9 @@ class UsersController extends SoftDeleteCrudController {
     /**
      * Creates a new Resource.
      *
+     * @param Request $input
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
     public function postCreate(Request $input) {
         try {
@@ -92,6 +96,50 @@ class UsersController extends SoftDeleteCrudController {
                 ['input' => true]
             );
         }
+    }
+
+    /**
+     * Logs in as the specified user.
+     *
+     * @param $id
+     * @param Guard $auth
+     * @param ImpersonateManager $manager
+     * @return \Illuminate\Http\Response
+     */
+    public function postImpersonate($id, Guard $auth, ImpersonateManager $manager) {
+        $otherUser = $this->getItem($id);
+        if($auth->user() === $otherUser) {
+            return notify(
+                new Notification(__('oxygen/mod-auth::messages.cannotImpersonateSameUser'), Notification::FAILED),
+            );
+        }
+        $manager->take($auth->user(), $otherUser);
+        return notify(
+            new Notification(__('oxygen/mod-auth::messages.impersonated', ['name' => $otherUser->getFullName()])),
+            ['refresh' => true]
+        );
+    }
+
+    /**
+     * @param Guard $auth
+     * @param ImpersonateManager $manager
+     * @return \Illuminate\Http\Response
+     */
+    public function postLeaveImpersonate(Guard $auth, ImpersonateManager $manager) {
+        if($manager->isImpersonating()) {
+            $manager->leave();
+
+            return notify(
+                new Notification(__('oxygen/mod-auth::messages.impersonationStopped', ['name' => $auth->user()->getFullName()])),
+                ['refresh' => true]
+            );
+        } else {
+            return notify(
+                new Notification(__('oxygen/mod-auth::messages.notImpersonating'), Notification::FAILED),
+            );
+        }
+
+
     }
 
 }

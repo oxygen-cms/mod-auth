@@ -25,6 +25,13 @@ return [
         'failed'               => 'Incorrect Username or Password'
     ],
 
+    'impersonated' => 'Now impersonating :name',
+    'impersonationStopped' => 'Welcome back - :name!',
+    'cannotImpersonateSameUser' => 'Cannot impersonate oneself',
+    'notImpersonating' => 'Never started impersonating in the first place',
+
+    'fullNameChanged' => 'Full name updated',
+
     'twoFactor' => [
         'success' => 'Code accepted',
         'failure' => 'Sorry, but that\'s not a valid code. Try again'

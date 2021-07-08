@@ -55,6 +55,7 @@ class PasswordController extends BlueprintController {
     /**
      * Handle a POST request to remind a user of their password.
      *
+     * @param PasswordBroker $password
      * @param Request $request
      * @return Response
      */
@@ -98,7 +99,11 @@ class PasswordController extends BlueprintController {
     /**
      * Handle a POST request to reset a user's password.
      *
+     * @param Request $request
+     * @param PasswordBroker $password
+     * @param Factory $validationFactory
      * @return Response
+     * @throws BlueprintNotFoundException
      */
     public function postReset(Request $request, PasswordBroker $password, Factory $validationFactory) {
         $validator = $validationFactory->make(

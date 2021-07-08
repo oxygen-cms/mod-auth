@@ -7,7 +7,9 @@
     <div id="app">
         <div class="login-fullscreen login-theme-{{ Preferences::get('appearance.auth::theme', 'autumn') }}">
             <div class="box container">
-                <div class="login-welcome">
+                @include('oxygen/mod-auth::loginLogo')
+
+                <div class="login-title">
                     <h1 class="subtitle has-text-centered">
                         @lang('oxygen/mod-auth::ui.logout.title')
                     </h1>
