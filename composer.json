@@ -14,12 +14,12 @@
         }
     ],
     "require": {
-        "php": ">=7.2.0",
-        "oxygen/auth": "~0.5.5",
-        "oxygen/core": "~0.10.0",
-        "oxygen/crud": "~0.7.1",
-        "oxygen/data": "~0.10.0",
-        "oxygen/preferences": "~0.3.7",
+        "php": ">=7.4.0",
+        "oxygen/auth": "~0.6.0",
+        "oxygen/core": "~0.11.0",
+        "oxygen/crud": "~0.8.0",
+        "oxygen/data": "~0.11.0",
+        "oxygen/preferences": "~0.4.0",
         "illuminate/support": "~6.0",
         "darkghosthunter/laraguard": "dev-master",
         "guzzlehttp/guzzle": "~6.5.5",
