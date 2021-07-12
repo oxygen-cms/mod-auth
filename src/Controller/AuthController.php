@@ -183,6 +183,7 @@ class AuthController extends BasicCrudController {
      * Log the user out.
      *
      * @param AuthManager $auth
+     * @param SessionManager $session
      * @param Dispatcher $events
      * @return mixed
      */
