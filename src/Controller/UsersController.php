@@ -116,7 +116,7 @@ class UsersController extends SoftDeleteCrudController {
         $manager->take($auth->user(), $otherUser);
         return notify(
             new Notification(__('oxygen/mod-auth::messages.impersonated', ['name' => $otherUser->getFullName()])),
-            ['refresh' => true]
+            ['redirect' => 'dashboard.main', 'hardRedirect' => true]
         );
     }
 
